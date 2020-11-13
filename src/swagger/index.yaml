@@ -1,0 +1,40 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: RestFul API docs
+  description: API docs for ToDo application
+  contact:
+    name: Andrés Leonardo Liscano
+    email: andresliscanoa@gmail.com
+  license:
+    name: Private
+host: localhost:3000
+servers:
+  - url: http://localhost:3000/api
+    description: Local server
+  - url: '{protocol}://{subdominio}.{region}.elasticbeanstalk.com/api'
+    variables:
+      protocol:
+        default: http
+        enum:
+          - http
+          - https
+      subdominio:
+        default: devbatchrecord
+        enum:
+          - devbatchrecord
+          - qabatchrecord
+      region:
+        default: us-east-1
+        enum:
+          - us-east-1
+basePath: '/api'
+produces: application/json
+tags:
+  - name: Todos
+    description: Todos CRUD
+  - name: Category
+    description: Todos Category CRUD
+  - name: Admin
+    description: Crud for ADMIN User
+paths:

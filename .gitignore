@@ -1,0 +1,13 @@
+# Folders
+.idea/
+node_modules/
+dist/
+config/
+coverage/
+uploads/testfiles/
+
+# Files
+.DS_Store
+.env*
+*.log
+*.seed.js
