@@ -55,19 +55,19 @@ const userSchema = new mongoose.Schema( {
         trim    : true,
         required: true
     },
-    role    : {
+    rol: {
         type    : mongoose.Schema.Types.ObjectId,
         ref     : 'Roles',
         required: true
     }
 }, { timestamps: true } )
 
-userSchema.methods.generateJwt = async () => {
+userSchema.methods.generateJwt = async function () {
     return jwt.sign( {
         _id     : this._id,
         name    : this.name,
         lastname: this.lastname,
-        resp    : this.role
+        rol     : this.rol.name
     }, jwtPwd, { expiresIn: '3h' } )
 }
 
@@ -91,9 +91,11 @@ userSchema.pre( 'save', async function ( next ) {
     this.password = await bcrypt.hash( this.password, salt )
     return next()
 } )
-
-userSchema.methods.comparePasswords = async function ( password ) { await bcrypt.compare( password, this.password ) }
-
+userSchema.methods.hashPassword = async ( password ) => {
+    const salt = await bcrypt.genSalt( 10 )
+    return await bcrypt.hash( password, salt )
+}
+userSchema.methods.comparePasswords = async ( a, b ) => await bcrypt.compare( a, b )
 userSchema.methods.getUsers = async ( id, limit = 10, skip = 0 ) => {
     const total = await mongoose.model( 'Users', userSchema, 'Users' )
         .find(
@@ -122,7 +124,6 @@ userSchema.methods.getUsers = async ( id, limit = 10, skip = 0 ) => {
     }
     return { pagination, data }
 }
-
 userSchema.methods.getUserById = async ( id ) =>
     await mongoose.model( 'Users', userSchema, 'Users' )
         .findOne(
@@ -135,7 +136,6 @@ userSchema.methods.getUserById = async ( id ) =>
             path  : 'rol',
             select: 'name'
         } )
-
 userSchema.methods.updateUserById = async ( id, name, lastname, email, rol ) =>
     await mongoose.model( 'Users', userSchema, 'Users' )
         .updateOne(
@@ -146,7 +146,6 @@ userSchema.methods.updateUserById = async ( id, name, lastname, email, rol ) =>
                 name, lastname, email, rol: ObjectId( rol )
             }
         )
-
 userSchema.methods.updateUserPasswordByIdUser = async ( id, password ) =>
     await mongoose.model( 'Users', userSchema, 'Users' )
         .updateOne(
@@ -157,7 +156,6 @@ userSchema.methods.updateUserPasswordByIdUser = async ( id, password ) =>
                 password
             }
         )
-
 userSchema.methods.updateUserRoleByIdUser = async ( id, rol ) =>
     await mongoose.model( 'Users', userSchema, 'Users' )
         .updateOne(

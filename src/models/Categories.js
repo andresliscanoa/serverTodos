@@ -105,5 +105,5 @@ categorySchema.methods.updateCategoryStatusByIdByUserId = async ( id, user, stat
             }
         )
 
-const Categories = new mongoose.model( 'Categories', categorySchema, 'Categories' )
+const Categories = mongoose.model( 'Categories', categorySchema, 'Categories' )
 module.exports = Categories

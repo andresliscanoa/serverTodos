@@ -12,29 +12,917 @@ host: localhost:3000
 servers:
   - url: http://localhost:3000/api
     description: Local server
-  - url: '{protocol}://{subdominio}.{region}.elasticbeanstalk.com/api'
-    variables:
-      protocol:
-        default: http
-        enum:
-          - http
-          - https
-      subdominio:
-        default: devbatchrecord
-        enum:
-          - devbatchrecord
-          - qabatchrecord
-      region:
-        default: us-east-1
-        enum:
-          - us-east-1
 basePath: '/api'
 produces: application/json
 tags:
-  - name: Todos
-    description: Todos CRUD
-  - name: Category
-    description: Todos Category CRUD
   - name: Admin
     description: Crud for ADMIN User
+  - name: Category
+    description: Todos Category CRUD
+  - name: Roles
+    description: Roles CRUD
+  - name: Todos
+    description: Todos CRUD
+  - name: Users
 paths:
+  /users/sing/in:
+    post:
+      tags:
+        - Users
+      summary: Authentication method
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              example:
+                email: email@email.com
+                password: password
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  token:
+                    type: string
+                example:
+                  status: success
+                  message: User authorized
+                  token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  /users/{id}:
+    get:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Users
+      summary: Find user by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: User ID
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: object
+                    properties:
+                      first:
+                        type: string
+                      last:
+                        type: string
+                  lastname:
+                    type: object
+                    properties:
+                      first:
+                        type: string
+                      last:
+                        type: string
+                  email:
+                    type: string
+                  rol:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      name:
+                        type: string
+                example:
+                  name:
+                    first: name
+                    last:
+                  lastname:
+                    first: lastname
+                    last:
+                  email: email@email.com
+                  rol:
+                    _id: 5f2f7389899672386846c555
+                    name: USERS
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+    put:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Admin
+      summary: Update user information by ID
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: User ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: object
+                  properties:
+                    first:
+                      type: string
+                    last:
+                      type: string
+                lastname:
+                  type: object
+                  properties:
+                    first:
+                      type: string
+                    last:
+                      type: string
+                email:
+                  type: string
+                rol:
+                  type: string
+              example:
+                name:
+                  first: username
+                lastname:
+                  first: lastname
+                email: email@email.com
+                rol: 5f2f7389899672386846c555
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: User updated successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error | Data does not match our records
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  /users/unique/email:
+    get:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Admin
+      summary: Check if the email provided is unique
+      parameters:
+        - in: query
+          name: value
+          schema:
+            type: string
+          required: true
+          description: Email to check
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Available value | Duplicate value
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  /users:
+    get:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Admin
+      summary: Find all users
+      parameters:
+        - in: query
+          name: items
+          schema:
+            type: number
+            minimun: 10
+            maximun: 100
+          required: true
+          description: Number of items to return per page
+        - in: query
+          name: page
+          schema:
+            type: number
+            minimun: 1
+          required: true
+          description: Page number
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                    properties:
+                      pagination:
+                        type: object
+                        properties:
+                          total:
+                            type: number
+                          perPage:
+                            type: number
+                          pages:
+                            type: number
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            name:
+                              type: object
+                              properties:
+                                first:
+                                  type: string
+                                last:
+                                  type: string
+                            lastname:
+                              type: object
+                              properties:
+                                fisrt:
+                                  type: string
+                                last:
+                                  type: string
+                            email:
+                              type: string
+                            rol:
+                              type: object
+                              properties:
+                                _id:
+                                  type: string
+                                name:
+                                  type: string
+                            created_at:
+                              type: string
+                            updated_at:
+                              type: string
+                example:
+                  status: success
+                  message: Users list
+                  response:
+                    pagination:
+                      total: 150
+                      perPage: 10
+                      pages: 15
+                    data:
+                      - _id: 5f2f7389899672386846c555
+                        name:
+                          first: name
+                          last:
+                        lastname:
+                          first: lastname
+                          last:
+                        email: email@email.com
+                        rol:
+                          _id: 5f2f7389899672386846c556
+                          name: USERS
+                        created_at: 2020-10-10 18:04:25
+                        updated_at: 2020-10-11 18:04:25
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+    
+    post:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Admin
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: object
+                  properties:
+                    first:
+                      type: string
+                      required: true
+                    last:
+                      type: string
+                lastname:
+                  type: object
+                  properties:
+                    first:
+                      type: string
+                      required: true
+                    last:
+                      type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                rol:
+                  type: string
+            example:
+              name:
+                first: username
+              lastname:
+                first: lastname
+              email: email@email.com
+              password: password1
+              rol: 5f2f7389899672386846c555
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: User created successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  /users/password:
+    put:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Admin
+      summary: Update user password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                password:
+                  type: string
+              example:
+                id: 5f2f7389899672386846c555
+                password: newpassword2
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Password updated successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  /users/rol:
+    put:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Admin
+      summary: Update user rol
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                rol:
+                  type: string
+              example:
+                id: 5f2f7389899672386846c555
+                password: 5f2f7389899672386846c556
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Rol updated successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  /roles:
+    get:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Roles
+      summary: List all roles created
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: array
+                    items:
+                      schema:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                          name:
+                            type: string
+                          status:
+                            type: boolean
+                example:
+                  status: success
+                  message: Roles list
+                  response:
+                    - _id: 5f2f7389899672386846c558
+                      name: admin
+                      status: true
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: Authorization

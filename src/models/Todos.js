@@ -37,8 +37,8 @@ const todoSchema = new mongoose.Schema( {
         min    : 1,
         max    : 255,
         trim   : true,
-        default: 'pending',
-        enum   : [ 'pending', 'overdue', 'finished' ]
+        default: 'Pending',
+        enum   : [ 'Pending', 'Overdue', 'Finished' ]
     },
     user       : {
         type    : mongoose.Schema.Types.ObjectId,

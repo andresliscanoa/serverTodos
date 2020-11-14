@@ -1,29 +1,25 @@
 require( 'dotenv' ).config()
 const jwt = require( 'jsonwebtoken' )
 const Logger = require( '../loaders/logger' )
-const logger = new Logger( 'auth' )
+const logger = new Logger( 'Authentication' )
 
-async function auth( req, res, next ) {
+async function authentication( req, res, next ) {
     const token = req.header( 'Authorization' ) ? req.header( 'Authorization' ).split( ' ' )[1] : false
     if ( !token ) {
-        logger.warn( 'Acceso no autorizado', { ...req.info } )
+        await logger.warn( 'Unauthorized access', { ...req.info } )
         return res.status( 401 ).send( {
-            success     : false,
-            httpCode    : 401,
-            internalCode: '000',
-            msg         : 'Acceso no autorizado'
+            status : 'error',
+            message: 'Unauthorized access'
         } )
     }
     try {
         await jwt.verify( token, process.env.JSON_PWD, async ( err, result ) => {
             if ( err ) {
                 const { code, message, stack } = err
-                await logger.error( 'Error en el servidor', { code, message, stack, ...req.info } )
+                await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info } )
                 return res.status( 401 ).send( {
-                    success     : false,
-                    httpCode    : 401,
-                    internalCode: '000',
-                    msg         : 'Acceso no autorizado'
+                    status : 'error',
+                    message: 'Unauthorized access'
                 } )
             }
             req.user = result
@@ -33,12 +29,10 @@ async function auth( req, res, next ) {
         const { code, message, stack } = err
         await logger.error( 'Error en el servidor', { code, message, stack, ...req.info } )
         return res.status( 400 ).send( {
-            success     : false,
-            httpCode    : 400,
-            internalCode: code,
-            msg         : 'Ops, algo ha salido mal'
+            status : 'error',
+            message: 'Ops, something went wrong'
         } )
     }
 }
 
-module.exports = auth
+module.exports = authentication
