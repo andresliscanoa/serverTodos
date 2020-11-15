@@ -21,15 +21,17 @@ const categorySchema = new mongoose.Schema( {
     }
 }, { timestamps: true } )
 
-categorySchema.methods.uniqueCategoryName = async ( name, id = 'none' ) => {
+categorySchema.methods.uniqueCategoryName = async ( name, id = 'none', user ) => {
     const data = id === 'none' ? await mongoose.model( 'Categories', categorySchema, 'Categories' )
         .find( {
-            name
+            name,
+            user: ObjectId( user )
         } )
         .countDocuments() : await mongoose.model( 'Categories', categorySchema, 'Categories' )
         .find( {
-            _id: { $ne: ObjectId( id ) },
-            name
+            _id : { $ne: ObjectId( id ) },
+            name,
+            user: ObjectId( user )
         } )
         .countDocuments()
     return !data
@@ -47,6 +49,9 @@ categorySchema.methods.getCategoriesByUserId = async ( id, limit = 10, skip = 0 
         .find(
             {
                 user: ObjectId( id )
+            },
+            {
+                _id: 1, name: 1, status: 1
             }
         )
         .skip( skip )

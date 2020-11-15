@@ -1,4 +1,5 @@
 # Server Todos
+See [ServerTodos](https://server-todos.herokuapp.com/api/)
 
 ## Description
 
@@ -17,16 +18,16 @@ JWT
 - Controllers
   - [x] Users
   - [x] Roles
-  - [ ] Categories
+  - [x] Categories
   - [ ] Todos
 - Routes
   - [x] Users
   - [x] Roles
-  - [ ] Categories
+  - [x] Categories
   - [ ] Todos
 - Request validations
   - [x] Users
-  - [ ] Categories
+  - [x] Categories
   - [ ] Todos
 - Middlewares
   - [x] Authentication
@@ -53,3 +54,9 @@ JWT
 ### Test
 > npm test
 
+### Env vars
+```
+- URL_DB: MongoDB connection string
+- NAME_DB: MongoDB database name
+- JSON_PWD: Your JWT secret key
+```
