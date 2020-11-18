@@ -24,11 +24,11 @@ JWT
   - [x] Users
   - [x] Roles
   - [x] Categories
-  - [ ] Todos
+  - [x] Todos
 - Request validations
   - [x] Users
   - [x] Categories
-  - [ ] Todos
+  - [x] Todos
 - Middlewares
   - [x] Authentication
   - [x] Authorization

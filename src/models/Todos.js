@@ -66,10 +66,15 @@ todoSchema.methods.getTodosByUserId = async ( id, limit, skip ) => {
         )
         .skip( skip )
         .limit( limit )
+        .populate(
+            {
+                path  : 'category',
+                select: '_id name'
+            }
+        )
     const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }
     return { pagination, data }
 }
-
 todoSchema.methods.getTodosByUserIdByStatus = async ( id, status, limit, skip ) => {
     const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
         .find(
@@ -91,10 +96,15 @@ todoSchema.methods.getTodosByUserIdByStatus = async ( id, status, limit, skip ) 
         )
         .skip( skip )
         .limit( limit )
+        .populate(
+            {
+                path  : 'category',
+                select: '_id name'
+            }
+        )
     const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }
     return { pagination, data }
 }
-
 todoSchema.methods.getTodosByUserIdByDateRange = async ( id, start, end, limit, skip ) => {
     const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
         .find(
@@ -122,10 +132,15 @@ todoSchema.methods.getTodosByUserIdByDateRange = async ( id, start, end, limit, 
         )
         .skip( skip )
         .limit( limit )
+        .populate(
+            {
+                path  : 'category',
+                select: '_id name'
+            }
+        )
     const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }
     return { pagination, data }
 }
-
 todoSchema.methods.getTodosByUserIdByCategoryId = async ( id, category, limit, skip ) => {
     const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
         .find(
@@ -147,10 +162,15 @@ todoSchema.methods.getTodosByUserIdByCategoryId = async ( id, category, limit, s
         )
         .skip( skip )
         .limit( limit )
+        .populate(
+            {
+                path  : 'category',
+                select: '_id name'
+            }
+        )
     const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }
     return { pagination, data }
 }
-
 todoSchema.methods.updateTodosByIdByUserId =
     async ( id, user, title, description, category, start, deadline, status ) =>
         await mongoose.model( 'Todos', todoSchema, 'Todos' )
@@ -163,7 +183,6 @@ todoSchema.methods.updateTodosByIdByUserId =
                     title, description, category, start, deadline, status
                 }
             )
-
 todoSchema.methods.updateTodosStatusByIdByUserId = async ( id, user, status ) =>
     await mongoose.model( 'Todos', todoSchema, 'Todos' )
         .updateOne(
@@ -175,16 +194,14 @@ todoSchema.methods.updateTodosStatusByIdByUserId = async ( id, user, status ) =>
                 status
             }
         )
-
 todoSchema.methods.deleteTodosByIdByUserId = async ( id, user ) =>
     await mongoose.model( 'Todos', todoSchema, 'Todos' )
         .deleteOne(
             {
                 _id : ObjectId( id ),
-                user: ObjectId( id )
+                user: ObjectId( user )
             }
         )
 
-
-const Todos = new mongoose.model( 'Todos', todoSchema, 'Todos' )
+const Todos = mongoose.model( 'Todos', todoSchema, 'Todos' )
 module.exports = Todos
