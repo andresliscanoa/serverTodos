@@ -36,13 +36,13 @@ JWT
 - Tests - Jest
   - [x] Users
   - [x] Roles
-  - [ ] Categories
+  - [x] Categories
   - [ ] Todos
 - Documentation - Swagger
   - [x] Users
   - [x] Admin
   - [x] Roles
-  - [ ] Categories
+  - [x] Categories
   - [ ] Todos
 
 ### Project setup

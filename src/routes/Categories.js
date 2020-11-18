@@ -12,14 +12,6 @@ router.get( '/unique/name', [ authentication, authorization ], [
         .trim()
         .isLength( { min: 1, max: 100 } ).withMessage( 'Must be between one and 100 characters' )
 ], uniqueCategoriesName )
-router.get( '', [ authentication, authorization ], [
-    query( 'items' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .isInt( { min: 10, max: 100 } ).withMessage( 'Must be numeric between 10 and 100' ),
-    query( 'page' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .isInt( { min: 1 } ).withMessage( 'Must be numeric greater or equal to one' )
-], getCategoriesByIdUser )
 router.get( '/name', [ authentication, authorization ], [
     query( 'items' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
@@ -32,6 +24,14 @@ router.get( '/name', [ authentication, authorization ], [
         .trim()
         .isLength( { min: 1, max: 100 } ).withMessage( 'Must be between one and 100 characters' )
 ], getCategoriesByNameByIdUser )
+router.get( '', [ authentication, authorization ], [
+    query( 'items' )
+        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
+        .isInt( { min: 10, max: 100 } ).withMessage( 'Must be numeric between 10 and 100' ),
+    query( 'page' )
+        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
+        .isInt( { min: 1 } ).withMessage( 'Must be numeric greater or equal to one' )
+], getCategoriesByIdUser )
 router.post( '', [ authentication, authorization ], [
     body( 'name' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )

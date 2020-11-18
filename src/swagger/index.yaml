@@ -12,6 +12,8 @@ host: localhost:3000
 servers:
   - url: http://localhost:3000/api
     description: Local server
+  - url: https://server-todos.herokuapp.com/api/
+    description: Test server
 basePath: '/api'
 produces: application/json
 tags:
@@ -25,7 +27,8 @@ tags:
     description: Todos CRUD
   - name: Users
 paths:
-  /users/sing/in:
+  ########## USERS ##########
+  /api/users/sing/in:
     post:
       tags:
         - Users
@@ -111,7 +114,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /users/{id}:
+  /api/users/{id}:
     get:
       security:
         - apiKey: [ ]
@@ -325,7 +328,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /users/unique/email:
+  /api/users/unique/email:
     get:
       security:
         - apiKey: [ ]
@@ -403,7 +406,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /users:
+  /api/users:
     get:
       security:
         - apiKey: [ ]
@@ -419,6 +422,13 @@ paths:
             maximun: 100
           required: true
           description: Number of items to return per page
+        - in: query
+          name: page
+          schema:
+            type: number
+            minimun: 1
+          required: true
+          description: Current page
         - in: query
           name: page
           schema:
@@ -555,7 +565,6 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-    
     post:
       security:
         - apiKey: [ ]
@@ -748,7 +757,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /users/rol:
+  /api/users/rol:
     put:
       security:
         - apiKey: [ ]
@@ -833,7 +842,608 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /roles:
+  ##########################
+  ########## CATEGORY ##########
+  /api/categories/unique/name:
+    get:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Category
+      summary: Check is Category's name already exists
+      parameters:
+        - in: query
+          name: value
+          schema:
+            type: string
+          required: true
+          description: Name to check
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Available value | Duplicate value
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  /api/categories/name:
+    get:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Category
+      summary: Find all categories by name
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+          required: true
+          description: Value to find
+        - in: query
+          name: items
+          schema:
+            type: number
+            minimun: 10
+            maximun: 100
+          required: true
+          description: Quantity of items to return per page
+        - in: query
+          name: page
+          schema:
+            type: number
+            minimun: 1
+          required: true
+          description: Actual page
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                    properties:
+                      pagination:
+                        type: object
+                        properties:
+                          total:
+                            type: number
+                          perPage:
+                            type: number
+                          pages:
+                            type: number
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            name:
+                              type: string
+                            status:
+                              type: boolean
+                            created_at:
+                              type: string
+                            updated_at:
+                              type: string
+                example:
+                  status: success
+                  message: Categories list by name
+                  response:
+                    pagination:
+                      total: 150
+                      perPage: 10
+                      pages: 15
+                    data:
+                      - _id: 5f2f7389899672386846c555
+                        name: categoryOne
+                        status: true
+                        created_at: 2020-10-10 18:04:25
+                        updated_at: 2020-10-11 18:04:25
+                      - _id: 5f2f7389899672386846c555
+                        name: categoryTwo
+                        status: true
+                        created_at: 2020-10-10 18:04:25
+                        updated_at: 2020-10-11 18:04:25
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  /api/categories:
+    get:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Category
+      summary: Return a list of all categories created
+      parameters:
+        - in: query
+          name: items
+          schema:
+            type: number
+            minimun: 10
+            maximun: 100
+          required: true
+          description: Quantity of items to return per page
+        - in: query
+          name: page
+          schema:
+            type: number
+            minimun: 1
+          required: true
+          description: Actual page
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                    properties:
+                      pagination:
+                        type: object
+                        properties:
+                          total:
+                            type: number
+                          perPage:
+                            type: number
+                          pages:
+                            type: number
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            name:
+                              type: string
+                            status:
+                              type: boolean
+                            created_at:
+                              type: string
+                            updated_at:
+                              type: string
+                example:
+                  status: success
+                  message: Categories list
+                  response:
+                    pagination:
+                      total: 150
+                      perPage: 10
+                      pages: 15
+                    data:
+                      - _id: 5f2f7389899672386846c555
+                        name: categoryOne
+                        status: true
+                        created_at: 2020-10-10 18:04:25
+                        updated_at: 2020-10-11 18:04:25
+                      - _id: 5f2f7389899672386846c555
+                        name: categoryTwo
+                        status: true
+                        created_at: 2020-10-10 18:04:25
+                        updated_at: 2020-10-11 18:04:25
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+    post:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Category
+      summary: Create a new category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              example:
+                name: categoryOne
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Category created successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+    put:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Category
+      summary: Update a category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                name:
+                  type: string
+                status:
+                  type: boolean
+              example:
+                id: 5f2f7389899672386846c558
+                name: categoryUpdated
+                status: true
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Category updated successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  /api/categories/status:
+    put:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Category
+      summary: Update a category status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                status:
+                  type: boolean
+              example:
+                id: 5f2f7389899672386846c558
+                status: false
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Category updated successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  ##############################
+  ########## ROLES ##########
+  /api/roles:
     get:
       security:
         - apiKey: [ ]
@@ -920,6 +1530,10 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
+  ###########################
+  ########## TODOS ##########
+  
+  ###########################
 components:
   securitySchemes:
     apiKey:

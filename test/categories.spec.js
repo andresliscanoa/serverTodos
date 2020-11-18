@@ -160,6 +160,80 @@ describe( 'TEST CATEGORIES', () => {
                 done()
             } )
         } )
-        describe( 'PUT /api/categories ' )
+        describe( 'PUT /api/categories', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.put( `${ url }` )
+                    .set( 'Authorization', null )
+                    .send( {
+                        id,
+                        name  : faker.random.word( 'string' ),
+                        status: true
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid params', async done => {
+                const res = await request.put( `${ url }` )
+                    .set( 'Authorization', token )
+                    .send( {
+                        id    : null,
+                        name  : null,
+                        status: 'algo ahi'
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+                done()
+            } )
+            it( 'Should return http 200 at valid params', async done => {
+                const res = await request.put( `${ url }` )
+                    .set( 'Authorization', token )
+                    .send( {
+                        id,
+                        name  : faker.random.word( 'string' ),
+                        status: true
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Category updated successfully' )
+                done()
+            } )
+        } )
+        describe( 'PUT /api/categories/status', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.put( `${ url }/status` )
+                    .set( 'Authorization', null )
+                    .send( {
+                        id,
+                        status: faker.random.boolean()
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid params', async done => {
+                const res = await request.put( `${ url }/status` )
+                    .set( 'Authorization', token )
+                    .send( {
+                        id    : null,
+                        status: 'algo ahi'
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+                done()
+            } )
+            it( 'Should return http 200 at valid params', async done => {
+                const res = await request.put( `${ url }/status` )
+                    .set( 'Authorization', token )
+                    .send( {
+                        id,
+                        status: 'false'
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Category updated successfully' )
+                done()
+            } )
+        } )
     } )
 } )
