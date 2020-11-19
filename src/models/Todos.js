@@ -47,6 +47,34 @@ const todoSchema = new mongoose.Schema( {
     }
 }, { timestamps: true } )
 
+todoSchema.methods.getTodos = async ( limit, skip ) => {
+    const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
+        .find()
+        .countDocuments()
+    const data = await mongoose.model( 'Todos', todoSchema, 'Todos' )
+        .find(
+            {},
+            {
+                __v: 0
+            }
+        )
+        .skip( skip )
+        .limit( limit )
+        .populate(
+            {
+                path  : 'category',
+                select: '_id name'
+            }
+        )
+        .populate(
+            {
+                path  : 'user',
+                select: '_id email'
+            }
+        )
+    const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }
+    return { pagination, data }
+}
 todoSchema.methods.getTodosByUserId = async ( id, limit, skip ) => {
     const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
         .find(
@@ -106,13 +134,15 @@ todoSchema.methods.getTodosByUserIdByStatus = async ( id, status, limit, skip ) 
     return { pagination, data }
 }
 todoSchema.methods.getTodosByUserIdByDateRange = async ( id, start, end, limit, skip ) => {
+    /*const a = start.split('-')
+     const b = end.split('-')*/
     const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
         .find(
             {
-                user      : ObjectId( id ),
-                created_at: {
-                    $gte: start,
-                    $lte: end
+                user     : ObjectId( id ),
+                createdAt: {
+                    $gte: new Date( new Date( start ).setHours( 0, 0, 0 ) ),
+                    $lt : new Date( new Date( end ).setHours( 23, 59, 59 ) )
                 }
             }
         )
@@ -120,10 +150,10 @@ todoSchema.methods.getTodosByUserIdByDateRange = async ( id, start, end, limit, 
     const data = await mongoose.model( 'Todos', todoSchema, 'Todos' )
         .find(
             {
-                user      : ObjectId( id ),
-                created_at: {
-                    $gte: start,
-                    $lte: end
+                user     : ObjectId( id ),
+                createdAt: {
+                    $gte: new Date( new Date( start ).setHours( 0, 0, 0 ) ),
+                    $lt : new Date( new Date( end ).setHours( 23, 59, 59 ) )
                 }
             },
             {
@@ -177,7 +207,7 @@ todoSchema.methods.updateTodosByIdByUserId =
             .updateOne(
                 {
                     _id : ObjectId( id ),
-                    user: ObjectId( id )
+                    user: ObjectId( user )
                 },
                 {
                     title, description, category, start, deadline, status
@@ -188,7 +218,7 @@ todoSchema.methods.updateTodosStatusByIdByUserId = async ( id, user, status ) =>
         .updateOne(
             {
                 _id : ObjectId( id ),
-                user: ObjectId( id )
+                user: ObjectId( user )
             },
             {
                 status
