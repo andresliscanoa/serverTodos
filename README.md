@@ -37,7 +37,7 @@ JWT
   - [x] Users
   - [x] Roles
   - [x] Categories
-  - [ ] Todos
+  - [x] Todos
 - Documentation - Swagger
   - [x] Users
   - [x] Admin
