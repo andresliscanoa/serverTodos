@@ -51,12 +51,12 @@ const swaggerOptions = {
     .parameter__name { color: white !important }`
 }
 const swaggerDoc = YAML.load( './src/swagger/index.yaml' )
-index.use( '/api', swaggerUI.serve, swaggerUI.setup( swaggerDoc, swaggerOptions ) )
+index.use( '/docs', swaggerUI.serve, swaggerUI.setup( swaggerDoc, swaggerOptions ) )
 index.get( '/api/status', ( req, res ) => {
     return res.status( 200 ).send( { status: 'OK' } )
 } )
 index.get( '/', ( req, res ) => {
-    res.redirect( '/api' )
+    res.redirect( '/docs' )
 } )
 
 

@@ -173,7 +173,7 @@ usersController.singIn = async ( req, res ) => {
         const match = await user.comparePasswords( password, userFound.password )
         if ( match ) {
             const token = await userFound.generateJwt()
-            return res.status( 200 ).send( {
+            return res.header( 'Authorization', `Bearer ${ token }` ).status( 200 ).send( {
                 status : 'success',
                 message: 'User authorized',
                 token  : `Bearer ${ token }`

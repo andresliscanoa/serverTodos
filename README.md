@@ -1,5 +1,5 @@
 # Server Todos
-See [ServerTodos](https://server-todos.herokuapp.com/api/)
+See [ServerTodos](https://server-todos.herokuapp.com/docs)
 
 ## Description
 
