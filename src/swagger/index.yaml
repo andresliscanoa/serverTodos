@@ -13,11 +13,11 @@ externalDocs:
   url: https://github.com/andresliscanoa/serverTodos
 host: localhost:3000
 servers:
-  - url: http://localhost:3000/api
+  - url: http://localhost:3000
     description: Local server
-  - url: https://server-todos.herokuapp.com/api
+  - url: https://server-todos.herokuapp.com
     description: Test server
-basePath: '/api'
+basePath: ''
 produces: application/json
 tags:
   - name: Admin
@@ -31,7 +31,7 @@ tags:
   - name: Users
 paths:
   ########## USERS ##########
-  /api/users/sing/in:
+  /users/sing/in:
     post:
       tags:
         - Users
@@ -117,7 +117,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /api/users/{id}:
+  /users/{id}:
     get:
       security:
         - apiKey: [ ]
@@ -331,7 +331,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /api/users/unique/email:
+  /users/unique/email:
     get:
       security:
         - apiKey: [ ]
@@ -409,7 +409,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /api/users:
+  /users:
     get:
       security:
         - apiKey: [ ]
@@ -675,7 +675,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /api/users/set/password:
+  /users/set/password:
     put:
       security:
         - apiKey: [ ]
@@ -760,7 +760,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /api/users/set/rol:
+  /users/set/rol:
     put:
       security:
         - apiKey: [ ]
@@ -847,7 +847,7 @@ paths:
           description: INTERNAL SERVER ERROR
   ##########################
   ########## CATEGORY ##########
-  /api/categories/unique/name:
+  /categories/unique/name:
     get:
       security:
         - apiKey: [ ]
@@ -925,7 +925,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /api/categories/name:
+  /categories/name:
     get:
       security:
         - apiKey: [ ]
@@ -1061,7 +1061,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /api/categories:
+  /categories:
     get:
       security:
         - apiKey: [ ]
@@ -1359,7 +1359,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /api/categories/status:
+  /categories/status:
     put:
       security:
         - apiKey: [ ]
@@ -1446,7 +1446,7 @@ paths:
           description: INTERNAL SERVER ERROR
   ##############################
   ########## ROLES ##########
-  /api/roles:
+  /roles:
     get:
       security:
         - apiKey: [ ]
@@ -1535,7 +1535,7 @@ paths:
           description: INTERNAL SERVER ERROR
   ###########################
   ########## TODOS ##########
-  /api/todos:
+  /todos:
     get:
       security:
         - apiKey: [ ]
@@ -2001,7 +2001,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /api/todos/status:
+  /todos/status:
     put:
       security:
         - apiKey: [ ]

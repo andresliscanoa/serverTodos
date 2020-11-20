@@ -21,7 +21,7 @@ app.use( function ( req, res, next ) {
     }
     next()
 } )
-const whitelist = [ process.env.SERVER_NAME, 'http://localhost:3000', 'http://devbatchrecord.us-east-1.elasticbeanstalk.com', 'https://devbatchrecord.us-east-1.elasticbeanstalk.com', /elasticbeanstalk\.com$/ ]
+const whitelist = [ process.env.SERVER_NAME, 'http://localhost:3000', 'https://server-todos.herokuapp.com/' ]
 let corsOptions = {
     origin: function ( origin, callback ) {
         if ( whitelist.indexOf( origin ) !== -1 || !origin ) {
