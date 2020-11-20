@@ -15,7 +15,7 @@ host: localhost:3000
 servers:
   - url: http://localhost:3000/api
     description: Local server
-  - url: https://server-todos.herokuapp.com
+  - url: https://server-todos.herokuapp.com/api
     description: Test server
 basePath: ''
 produces: application/json
