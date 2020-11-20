@@ -2,66 +2,23 @@ const express = require( 'express' )
 const router = express.Router()
 const authentication = require( '../middlewares/authentication' )
 const authorization = require( '../middlewares/authorization' )
-const admin = require( '../middlewares/admin' )
-const { query, param, body } = require( 'express-validator' )
-const { getAllTodos, getAllTodosByUserId, getTodosByCategory, getTodosByDates, getTodosByStatus, createTodo, updateTodoById, updateTodoStatusById, deleteTodoById } = require( '../controllers/Todos' )
+const { query, body } = require( 'express-validator' )
+const { getTodos, createTodo, updateTodoById, updateTodoStatusById, deleteTodoById } = require( '../controllers/Todos' )
 
-router.get( '', [ authentication, admin ], [
-    query( 'items' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .isInt( { min: 10, max: 100 } ).withMessage( 'Must be numeric between 10 and 100' ),
-    query( 'page' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .isInt( { min: 1 } ).withMessage( 'Must be numeric greater or equal to one' )
-], getAllTodos )
-router.get( '/user/:user', [ authentication, authorization ], [
+router.get( '', [ authentication, authorization ], [
     query( 'items' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
         .isInt( { min: 10, max: 100 } ).withMessage( 'Must be numeric between 10 and 100' ),
     query( 'page' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
         .isInt( { min: 1 } ).withMessage( 'Must be numeric greater or equal to one' ),
-    param( 'user' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
+    query( 'user' ).optional()
         .trim()
-        .isMongoId().withMessage( 'Not a valid ID' )
-], getAllTodosByUserId )
-router.get( '/category/:category', [ authentication, authorization ], [
-    query( 'items' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .isInt( { min: 10, max: 100 } ).withMessage( 'Must be numeric between 10 and 100' ),
-    query( 'page' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .isInt( { min: 1 } ).withMessage( 'Must be numeric greater or equal to one' ),
-    param( 'category' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .trim()
-        .isMongoId().withMessage( 'Not a valid ID' )
-], getTodosByCategory )
-router.get( '/status/:status', [ authentication, authorization ], [
-    query( 'items' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .isInt( { min: 10, max: 100 } ).withMessage( 'Must be numeric between 10 and 100' ),
-    query( 'page' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .isInt( { min: 1 } ).withMessage( 'Must be numeric greater or equal to one' ),
-    param( 'status' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .trim()
-        .isIn( [ 'Pending', 'Overdue', 'Finished' ] ).withMessage( 'Not a valid value' )
-], getTodosByStatus )
-router.get( '/date', [ authentication, authorization ], [
-    query( 'items' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .isInt( { min: 10, max: 100 } ).withMessage( 'Must be numeric between 10 and 100' ),
-    query( 'page' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
-        .isInt( { min: 1 } ).withMessage( 'Must be numeric greater or equal to one' ),
-    body( 'start' )
-        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
+        .isMongoId().withMessage( 'Not a valid ID' ),
+    query( 'start' ).optional()
         .trim()
         .isLength( { min: 10, max: 10 } ).withMessage( 'Must be 10 characters long' ),
-    body( 'end' ).optional()
+    query( 'end' ).optional()
         .trim()
         .isLength( { min: 10, max: 10 } ).withMessage( 'Must be 10 characters long' )
         .custom( ( value, { req } ) => {
@@ -70,8 +27,14 @@ router.get( '/date', [ authentication, authorization ], [
             } else {
                 return Promise.resolve()
             }
-        } ).withMessage( 'End Date can\'t be less than start Date' )
-], getTodosByDates )
+        } ).withMessage( 'End Date can\'t be less than start Date' ),
+    query( 'status' ).optional()
+        .trim()
+        .isIn( [ 'Pending', 'Overdue', 'Finished' ] ).withMessage( 'Not a valid value' ),
+    query( 'category' ).optional()
+        .trim()
+        .isMongoId().withMessage( 'Not a valid ID' )
+], getTodos )
 router.post( '', [ authentication, authorization ], [
     body( 'title' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )

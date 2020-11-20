@@ -7,12 +7,15 @@ info:
     name: Andrés Leonardo Liscano
     email: andresliscanoa@gmail.com
   license:
-    name: Private
+    name: Public
+externalDocs:
+  description: Source Code
+  url: https://github.com/andresliscanoa/serverTodos
 host: localhost:3000
 servers:
   - url: http://localhost:3000/api
     description: Local server
-  - url: https://server-todos.herokuapp.com/api/
+  - url: https://server-todos.herokuapp.com/api
     description: Test server
 basePath: '/api'
 produces: application/json
@@ -672,7 +675,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /users/password:
+  /api/users/set/password:
     put:
       security:
         - apiKey: [ ]
@@ -757,7 +760,7 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
-  /api/users/rol:
+  /api/users/set/rol:
     put:
       security:
         - apiKey: [ ]
@@ -1532,7 +1535,557 @@ paths:
           description: INTERNAL SERVER ERROR
   ###########################
   ########## TODOS ##########
-  
+  /api/todos:
+    get:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Todos
+      summary: Get Todos by filters
+      parameters:
+        - in: query
+          name: items
+          required: true
+          schema:
+            type: number
+            minimun: 10
+            maximun: 100
+          description: Quantity of items to return per page
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: number
+            minimun: 1
+          description: Current page
+        - in: query
+          name: user
+          schema:
+            type: string
+          description: User ID [If user is ADMIN then is not required]
+        - in: query
+          name: category
+          schema:
+            type: string
+          description: Category ID
+        - in: query
+          name: status
+          schema:
+            type: string
+          description: Todo status [Pending, Overdue, Finished]
+        - in: query
+          name: start
+          schema:
+            type: string
+          description: Start date to filter [YYYY-MM-DD]
+        - in: query
+          name: end
+          schema:
+            type: string
+          description: End date to filter [YYYY-MM-DD]
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                    properties:
+                      pagination:
+                        type: object
+                        properties:
+                          total:
+                            type: number
+                          perPage:
+                            type: number
+                          pages:
+                            type: number
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                            title:
+                              type: string
+                            description:
+                              type: string
+                            category:
+                              type: object
+                              properties:
+                                _id:
+                                  type: string
+                                name:
+                                  type: string
+                            start:
+                              type: string
+                            deadline:
+                              type: string
+                            status:
+                              type: string
+                            user:
+                              type: object
+                              properties:
+                                _id:
+                                  type: string
+                                email:
+                                  type: string
+                            created_at:
+                              type: string
+                            updated_at:
+                              type: string
+                example:
+                  status: success
+                  message: Categories list
+                  response:
+                    pagination:
+                      total: 150
+                      perPage: 10
+                      pages: 15
+                    data:
+                      - _id: 5f2f7389899672386846c555
+                        title: todoOne
+                        description: descriptionOne
+                        category:
+                          _id: 5f2f7389899672386846c550
+                          name: categoryOne
+                        status: Pending
+                        start: 2020-10-11 21:05:20
+                        deadline: 2020-10-15 12:00:00
+                        user:
+                          _id: 5f2f7389899672386846c560
+                          email: email@email.com
+                        created_at: 2020-10-10 18:04:25
+                        updated_at: 2020-10-11 18:04:25
+                      - _id: 5f2f7389899672386846c555
+                        title: todoOne
+                        category:
+                          _id: 5f2f7389899672386846c550
+                          name: categoryOne
+                        status: Finished
+                        user:
+                          _id: 5f2f7389899672386846c560
+                          email: email@email.com
+                        created_at: 2020-10-10 18:04:25
+                        updated_at: 2020-10-11 18:04:25
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+    post:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Todos
+      summary: Create a todo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                start:
+                  type: string
+                deadline:
+                  type: string
+                status:
+                  type: string
+              example:
+                title: Todo One
+                description: OPTIONAL
+                category: 5f2f7389899672386846c566
+                start: OPTIONAL - YYYY-MM-DD HH:MM:SS
+                deadline: OPTIONAL - YYYY-MM-DD HH:MM:SS
+                status: OPTIONAL - [Pending*, Overdue, Finished]
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Todo created successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+    put:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Todos
+      summary: Update a todo by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                title:
+                  type: string
+                description:
+                  type: string
+                category:
+                  type: string
+                start:
+                  type: string
+                deadline:
+                  type: string
+                status:
+                  type: string
+              example:
+                id: 5f2f7389899672386846c551
+                title: Todo Updated
+                description: OPTIONAL
+                category: 5f2f7389899672386846c510
+                status: Finished
+                start: OPTIONAL - YYYY-MM-DD HH:MM:SS
+                deadline: OPTIONAL - YYYY-MM-DD HH:MM:SS
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Todo updated successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error | Data does not match our records
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+    delete:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Todos
+      summary: Delete a todo By Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+              example:
+                id: 5f2f7389899672386846c568
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Todo deleted successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error | Data does not match our records
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
+  /api/todos/status:
+    put:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Todos
+      summary: Update a todo status by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                status:
+                  type: string
+              example:
+                id: 5f2f7389899672386846c567
+                status: Overdue
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: success
+                  message: Todo updated successfully
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error | Data does not match our records
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
   ###########################
 components:
   securitySchemes:

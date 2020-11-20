@@ -47,13 +47,29 @@ const todoSchema = new mongoose.Schema( {
     }
 }, { timestamps: true } )
 
-todoSchema.methods.getTodos = async ( limit, skip ) => {
+todoSchema.methods.getTodosByFilters = async ( params, limit, skip ) => {
+    let filter = {}
+    if ( params.user ) filter.user = ObjectId( params.user )
+    if ( params.category ) filter.category = ObjectId( params.category )
+    if ( params.status ) filter.status = params.status
+    if ( params.start ) filter.createdAt = {
+        $gte: new Date( new Date( params.start ).setHours( 0, 0, 0 ) )
+    }
+    if ( params.end ) filter.createdAt = {
+        $lte: new Date( new Date( params.end ).setHours( 23, 59, 59 ) )
+    }
+    if ( params.start && params.end ) filter.createdAt = {
+        $gte: new Date( new Date( params.start ).setHours( 0, 0, 0 ) ),
+        $lte: new Date( new Date( params.end ).setHours( 23, 59, 59 ) )
+    }
     const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
-        .find()
+        .find(
+            filter
+        )
         .countDocuments()
     const data = await mongoose.model( 'Todos', todoSchema, 'Todos' )
         .find(
-            {},
+            filter,
             {
                 __v: 0
             }
@@ -70,132 +86,6 @@ todoSchema.methods.getTodos = async ( limit, skip ) => {
             {
                 path  : 'user',
                 select: '_id email'
-            }
-        )
-    const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }
-    return { pagination, data }
-}
-todoSchema.methods.getTodosByUserId = async ( id, limit, skip ) => {
-    const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
-        .find(
-            {
-                user: ObjectId( id )
-            }
-        )
-        .countDocuments()
-    const data = await mongoose.model( 'Todos', todoSchema, 'Todos' )
-        .find(
-            {
-                user: ObjectId( id )
-            },
-            {
-                user: 0, __v: 0
-            }
-        )
-        .skip( skip )
-        .limit( limit )
-        .populate(
-            {
-                path  : 'category',
-                select: '_id name'
-            }
-        )
-    const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }
-    return { pagination, data }
-}
-todoSchema.methods.getTodosByUserIdByStatus = async ( id, status, limit, skip ) => {
-    const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
-        .find(
-            {
-                user: ObjectId( id ),
-                status
-            }
-        )
-        .countDocuments()
-    const data = await mongoose.model( 'Todos', todoSchema, 'Todos' )
-        .find(
-            {
-                user: ObjectId( id ),
-                status
-            },
-            {
-                user: 0, __v: 0
-            }
-        )
-        .skip( skip )
-        .limit( limit )
-        .populate(
-            {
-                path  : 'category',
-                select: '_id name'
-            }
-        )
-    const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }
-    return { pagination, data }
-}
-todoSchema.methods.getTodosByUserIdByDateRange = async ( id, start, end, limit, skip ) => {
-    /*const a = start.split('-')
-     const b = end.split('-')*/
-    const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
-        .find(
-            {
-                user     : ObjectId( id ),
-                createdAt: {
-                    $gte: new Date( new Date( start ).setHours( 0, 0, 0 ) ),
-                    $lt : new Date( new Date( end ).setHours( 23, 59, 59 ) )
-                }
-            }
-        )
-        .countDocuments()
-    const data = await mongoose.model( 'Todos', todoSchema, 'Todos' )
-        .find(
-            {
-                user     : ObjectId( id ),
-                createdAt: {
-                    $gte: new Date( new Date( start ).setHours( 0, 0, 0 ) ),
-                    $lt : new Date( new Date( end ).setHours( 23, 59, 59 ) )
-                }
-            },
-            {
-                user: 0, __v: 0
-            }
-        )
-        .skip( skip )
-        .limit( limit )
-        .populate(
-            {
-                path  : 'category',
-                select: '_id name'
-            }
-        )
-    const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }
-    return { pagination, data }
-}
-todoSchema.methods.getTodosByUserIdByCategoryId = async ( id, category, limit, skip ) => {
-    const total = await mongoose.model( 'Todos', todoSchema, 'Todos' )
-        .find(
-            {
-                user    : ObjectId( id ),
-                category: ObjectId( category )
-            }
-        )
-        .countDocuments()
-    const data = await mongoose.model( 'Todos', todoSchema, 'Todos' )
-        .find(
-            {
-                user    : ObjectId( id ),
-                category: ObjectId( category )
-            },
-            {
-                user: 0, __v: 0
-            }
-        )
-        .skip( skip )
-        .limit( limit )
-        .populate(
-            {
-                path  : 'category',
-                select: '_id name'
             }
         )
     const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }

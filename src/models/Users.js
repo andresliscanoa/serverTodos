@@ -110,14 +110,14 @@ userSchema.methods.getUsers = async ( id, limit = 10, skip = 0 ) => {
                 _id: { $ne: ObjectId( id ) }
             },
             {
-                _id: 1, name: 1, lastname: 1, email: 1, rol: 1, created_at: 1, updated_at: 1
+                _id: 1, name: 1, lastname: 1, email: 1, rol: 1, createdAt: 1, updatedAt: 1
             }
         )
         .skip( skip )
         .limit( limit )
         .populate( {
             path  : 'rol',
-            select: 'name'
+            select: '_id name'
         } )
     const pagination = {
         total, perPage: limit, pages: Math.ceil( total / limit )

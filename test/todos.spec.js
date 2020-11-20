@@ -20,7 +20,7 @@ describe( 'TEST TODOS', () => {
             token = res.body.token
             done()
         } )
-        describe( 'GET /api/todos', () => {
+        describe( 'GET /api/todos [items, page]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
                 const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
@@ -51,246 +51,307 @@ describe( 'TEST TODOS', () => {
                         page : 1
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 8 )
                 done()
             } )
         } )
-        describe( 'GET /api/todos/user/:user [Admin]', () => {
+        describe( 'GET /api/todos [items, page, user - Admin]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
-                const res = await request.get( `${ url }/user/${ adminID }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
                     .query( {
                         items: 10,
-                        page : 1
+                        page : 1,
+                        user : adminID
                     } )
                 expect( res.status ).toBe( 401 )
                 expect( res.body.message ).toBe( 'Unauthorized access' )
                 done()
             } )
             it( 'Should return http 400 at invalid query params', async done => {
-                const res = await request.get( `${ url }/user/${ adminID }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: null,
-                        page : 'algo ahi'
+                        page : 'algo ahi',
+                        user : '54654sdsdsadassafasfasfase54654'
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 400 at invalid path params', async done => {
-                const res = await request.get( `${ url }/user/sdfawfsadad54654gd6f` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: 10,
-                        page : 1
-                    } )
-                expect( res.status ).toBe( 400 )
-                expect( res.body.message ).toBe( 'Data integrity error' )
-                done()
-            } )
-            it( 'Should return http 200 at valid params', async done => {
-                const res = await request.get( `${ url }/user/${ adminID }` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
+                        page : 1,
+                        user : adminID
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 4 )
                 done()
             } )
         } )
-        describe( 'GET /api/todos/user/:user [User]', () => {
+        describe( 'GET /api/todos [items, page, user - User]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
-                const res = await request.get( `${ url }/user/${ userID }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
                     .query( {
                         items: 10,
-                        page : 1
+                        page : 1,
+                        user : userID
                     } )
                 expect( res.status ).toBe( 401 )
                 expect( res.body.message ).toBe( 'Unauthorized access' )
                 done()
             } )
             it( 'Should return http 400 at invalid query params', async done => {
-                const res = await request.get( `${ url }/user/${ userID }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: null,
-                        page : 'algo ahi'
+                        page : 'algo ahi',
+                        user : '54654sdsdsadassafasfasfase54654'
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 400 at invalid path params', async done => {
-                const res = await request.get( `${ url }/user/sdfawfsadad54654gd6f` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: 10,
-                        page : 1
-                    } )
-                expect( res.status ).toBe( 400 )
-                expect( res.body.message ).toBe( 'Data integrity error' )
-                done()
-            } )
-            it( 'Should return http 200 at valid params', async done => {
-                const res = await request.get( `${ url }/user/${ userID }` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
+                        page : 1,
+                        user : userID
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 4 )
                 done()
             } )
         } )
-        describe( 'GET /api/todos/category/:category', () => {
+        describe( 'GET /api/todos [items, page, category - Admin]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
-                const res = await request.get( `${ url }/category/${ adminCategory }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
                     .query( {
-                        items: 10,
-                        page : 1
+                        items   : 10,
+                        page    : 1,
+                        category: adminCategory
                     } )
                 expect( res.status ).toBe( 401 )
                 expect( res.body.message ).toBe( 'Unauthorized access' )
                 done()
             } )
             it( 'Should return http 400 at invalid query params', async done => {
-                const res = await request.get( `${ url }/category/${ adminCategory }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
-                        items: null,
-                        page : 'algo ahi'
+                        items   : null,
+                        page    : 'algo ahi',
+                        category: '54654sdsdsadassafasfasfase54654'
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 400 at invalid path params', async done => {
-                const res = await request.get( `${ url }/category/sf546dfds5fg4dgd` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
-                        items: 10,
-                        page : 1
-                    } )
-                expect( res.status ).toBe( 400 )
-                expect( res.body.message ).toBe( 'Data integrity error' )
-                done()
-            } )
-            it( 'Should return http 200 at valid params', async done => {
-                const res = await request.get( `${ url }/category/${ adminCategory }` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
+                        items   : 10,
+                        page    : 1,
+                        category: adminCategory
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list by category' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 2 )
                 done()
             } )
         } )
-        describe( 'GET /api/todos/status/:status', () => {
+        describe( 'GET /api/todos [items, page, category - User]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
-                const res = await request.get( `${ url }/status/Pending` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
                     .query( {
-                        items: 10,
-                        page : 1
+                        items   : 10,
+                        page    : 1,
+                        category: userCategory
                     } )
                 expect( res.status ).toBe( 401 )
                 expect( res.body.message ).toBe( 'Unauthorized access' )
                 done()
             } )
             it( 'Should return http 400 at invalid query params', async done => {
-                const res = await request.get( `${ url }/status/Pending` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
-                        items: null,
-                        page : 'algo ahi'
+                        items   : null,
+                        page    : 'algo ahi',
+                        category: '54654sdsdsadassafasfasfase54654'
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 400 at invalid path params', async done => {
-                const res = await request.get( `${ url }/status/sf546dfds5fg4dgd` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
-                        items: 10,
-                        page : 1
-                    } )
-                expect( res.status ).toBe( 400 )
-                expect( res.body.message ).toBe( 'Data integrity error' )
-                done()
-            } )
-            it( 'Should return http 200 at valid params [Pending]', async done => {
-                const res = await request.get( `${ url }/status/Pending` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
+                        items   : 10,
+                        page    : 1,
+                        category: userCategory
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list by status Pending' )
-                expect( res.body.response.pagination ).toBeTruthy()
-                expect( res.body.response.data ).toBeTruthy()
-                expect( res.body.response.data ).toHaveLength( 2 )
-                done()
-            } )
-            it( 'Should return http 200 at valid params [Overdue]', async done => {
-                const res = await request.get( `${ url }/status/Overdue` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
-                    } )
-                expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list by status Overdue' )
-                expect( res.body.response.pagination ).toBeTruthy()
-                expect( res.body.response.data ).toBeTruthy()
-                expect( res.body.response.data ).toHaveLength( 1 )
-                done()
-            } )
-            it( 'Should return http 200 at valid params [Finished]', async done => {
-                const res = await request.get( `${ url }/status/Finished` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
-                    } )
-                expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list by status Finished' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 1 )
                 done()
             } )
         } )
-        describe( 'GET /api/todos/date', () => {
+        describe( 'GET /api/todos [items, page, status - Pending]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
-                const res = await request.get( `${ url }/date` )
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        items : 10,
+                        page  : 1,
+                        status: 'Pending'
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items : null,
+                        page  : 'algo ahi',
+                        status: '54654sdsdsadassafasfasfase54654'
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items : 10,
+                        page  : 1,
+                        status: 'Pending'
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
+                expect( res.body.response.pagination ).toBeTruthy()
+                expect( res.body.response.data ).toBeTruthy()
+                expect( res.body.response.data ).toHaveLength( 4 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos [items, page, status - Overdue]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        items : 10,
+                        page  : 1,
+                        status: 'Overdue'
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items : null,
+                        page  : 'algo ahi',
+                        status: '54654sdsdsadassafasfasfase54654'
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items : 10,
+                        page  : 1,
+                        status: 'Overdue'
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
+                expect( res.body.response.pagination ).toBeTruthy()
+                expect( res.body.response.data ).toBeTruthy()
+                expect( res.body.response.data ).toHaveLength( 2 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos [items, page, status - Finished]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        items : 10,
+                        page  : 1,
+                        status: 'Finished'
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items : null,
+                        page  : 'algo ahi',
+                        status: '54654sdsdsadassafasfasfase54654'
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items : 10,
+                        page  : 1,
+                        status: 'Finished'
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
+                expect( res.body.response.pagination ).toBeTruthy()
+                expect( res.body.response.data ).toBeTruthy()
+                expect( res.body.response.data ).toHaveLength( 2 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos [items, page, start]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
                     .query( {
                         items: 10,
-                        page : 1
-                    } )
-                    .send( {
+                        page : 1,
                         start: new Date().toISOString().substr( 0, 10 )
                     } )
                 expect( res.status ).toBe( 401 )
@@ -298,64 +359,167 @@ describe( 'TEST TODOS', () => {
                 done()
             } )
             it( 'Should return http 400 at invalid query params', async done => {
-                const res = await request.get( `${ url }/date` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: null,
-                        page : 'algo ahi'
-                    } )
-                    .send( {
-                        start: new Date().toISOString().substr( 0, 10 )
-                    } )
-                expect( res.status ).toBe( 400 )
-                expect( res.body.message ).toBe( 'Data integrity error' )
-                done()
-            } )
-            it( 'Should return http 400 at invalid body', async done => {
-                const res = await request.get( `${ url }/date` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
-                    } )
-                    .send( {
+                        page : 'algo ahi',
                         start: null
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 400 at invalid date range', async done => {
-                const res = await request.get( `${ url }/date` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: 10,
-                        page : 1
+                        page : 1,
+                        start: new Date().toISOString().substr( 0, 10 )
                     } )
-                    .send( {
-                        start: new Date().toISOString().substr( 0, 10 ),
-                        end  : '1990-10-01'
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
+                expect( res.body.response.pagination ).toBeTruthy()
+                expect( res.body.response.data ).toBeTruthy()
+                expect( res.body.response.data ).toHaveLength( 8 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos [items, page, end]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        items: 10,
+                        page : 1,
+                        end  : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items: null,
+                        page : 'algo ahi',
+                        end  : null
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 200 at valid body', async done => {
-                const res = await request.get( `${ url }/date` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: 10,
-                        page : 1
+                        page : 1,
+                        end  : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
                     } )
-                    .send( {
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
+                expect( res.body.response.pagination ).toBeTruthy()
+                expect( res.body.response.data ).toBeTruthy()
+                expect( res.body.response.data ).toHaveLength( 8 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos [items, page, start, end]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        items: 10,
+                        page : 1,
+                        start: new Date().toISOString().substr( 0, 10 ),
+                        end  : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items: null,
+                        page : 'algo ahi',
+                        end  : null
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items: 10,
+                        page : 1,
                         start: new Date().toISOString().substr( 0, 10 ),
                         end  : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list by dates' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
-                expect( res.body.response.data ).toHaveLength( 4 )
+                expect( res.body.response.data ).toHaveLength( 8 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos [items, page, user, status, category, start, end]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        items   : 10,
+                        page    : 1,
+                        user    : adminID,
+                        category: adminCategory,
+                        status  : 'Overdue',
+                        start   : new Date().toISOString().substr( 0, 10 ),
+                        end     : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items   : null,
+                        page    : 'algo ahi',
+                        user    : 'sdasfasf',
+                        category: 'adsasa',
+                        status  : 'algo',
+                        start   : null,
+                        end     : null
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items   : 10,
+                        page    : 1,
+                        user    : adminID,
+                        category: adminCategory,
+                        status  : 'Overdue',
+                        start   : new Date().toISOString().substr( 0, 10 ),
+                        end     : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
+                expect( res.body.response.pagination ).toBeTruthy()
+                expect( res.body.response.data ).toBeTruthy()
+                expect( res.body.response.data ).toHaveLength( 1 )
                 done()
             } )
         } )
@@ -394,14 +558,15 @@ describe( 'TEST TODOS', () => {
                 done()
             } )
             it( 'Should return http 200 at valid params and new todo created', async done => {
-                const res = await request.get( `${ url }/user/${ adminID }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: 10,
-                        page : 1
+                        page : 1,
+                        user : adminID
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 5 )
@@ -496,7 +661,7 @@ describe( 'TEST TODOS', () => {
                 done()
             } )
         } )
-        describe( 'DELETE /api/todos/status', () => {
+        describe( 'DELETE /api/todos', () => {
             it( 'Should return http 401 at no Authorization', async done => {
                 const res = await request.delete( `${ url }` )
                     .set( 'Authorization', null )
@@ -540,7 +705,7 @@ describe( 'TEST TODOS', () => {
             token = res.body.token
             done()
         } )
-        describe( 'GET /api/todos', () => {
+        describe( 'GET /api/todos [items, page]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
                 const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
@@ -552,7 +717,18 @@ describe( 'TEST TODOS', () => {
                 expect( res.body.message ).toBe( 'Unauthorized access' )
                 done()
             } )
-            it( 'Should return http 403 at valid rol', async done => {
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items: null,
+                        page : 'algo ahi'
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 403 at valid query params', async done => {
                 const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
@@ -564,236 +740,269 @@ describe( 'TEST TODOS', () => {
                 done()
             } )
         } )
-        describe( 'GET /api/todos/user/:user [Admin]', () => {
+        describe( 'GET /api/todos [items, page, user - Admin]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
-                const res = await request.get( `${ url }/user/${ adminID }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
                     .query( {
                         items: 10,
-                        page : 1
+                        page : 1,
+                        user : adminID
                     } )
                 expect( res.status ).toBe( 401 )
                 expect( res.body.message ).toBe( 'Unauthorized access' )
                 done()
             } )
             it( 'Should return http 400 at invalid query params', async done => {
-                const res = await request.get( `${ url }/user/${ adminID }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: null,
-                        page : 'algo ahi'
+                        page : 'algo ahi',
+                        user : '54654sdsdsadassafasfasfase54654'
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 400 at invalid path params', async done => {
-                const res = await request.get( `${ url }/user/sdfawfsadad54654gd6f` )
+            it( 'Should return http 403 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: 10,
-                        page : 1
-                    } )
-                expect( res.status ).toBe( 400 )
-                expect( res.body.message ).toBe( 'Data integrity error' )
-                done()
-            } )
-            it( 'Should return http 403 at user task admin', async done => {
-                const res = await request.get( `${ url }/user/${ adminID }` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
+                        page : 1,
+                        user : adminID
                     } )
                 expect( res.status ).toBe( 403 )
                 expect( res.body.message ).toBe( 'Forbidden access' )
                 done()
             } )
         } )
-        describe( 'GET /api/todos/user/:user [User]', () => {
+        describe( 'GET /api/todos [items, page, user - User]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
-                const res = await request.get( `${ url }/user/${ userID }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
                     .query( {
                         items: 10,
-                        page : 1
+                        page : 1,
+                        user : userID
                     } )
                 expect( res.status ).toBe( 401 )
                 expect( res.body.message ).toBe( 'Unauthorized access' )
                 done()
             } )
             it( 'Should return http 400 at invalid query params', async done => {
-                const res = await request.get( `${ url }/user/${ userID }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: null,
-                        page : 'algo ahi'
+                        page : 'algo ahi',
+                        user : '54654sdsdsadassafasfasfase54654'
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 400 at invalid path params', async done => {
-                const res = await request.get( `${ url }/user/sdfawfsadad54654gd6f` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: 10,
-                        page : 1
-                    } )
-                expect( res.status ).toBe( 400 )
-                expect( res.body.message ).toBe( 'Data integrity error' )
-                done()
-            } )
-            it( 'Should return http 200 at valid params', async done => {
-                const res = await request.get( `${ url }/user/${ userID }` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
+                        page : 1,
+                        user : userID
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 4 )
                 done()
             } )
         } )
-        describe( 'GET /api/todos/category/:category', () => {
+        describe( 'GET /api/todos [items, page, category - User]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
-                const res = await request.get( `${ url }/category/${ userCategory }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
                     .query( {
-                        items: 10,
-                        page : 1
+                        items   : 10,
+                        page    : 1,
+                        user    : userID,
+                        category: userCategory
                     } )
                 expect( res.status ).toBe( 401 )
                 expect( res.body.message ).toBe( 'Unauthorized access' )
                 done()
             } )
             it( 'Should return http 400 at invalid query params', async done => {
-                const res = await request.get( `${ url }/category/${ userCategory }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
-                        items: null,
-                        page : 'algo ahi'
+                        items   : null,
+                        page    : 'algo ahi',
+                        user    : 'jsdksjbdks',
+                        category: '54654sdsdsadassafasfasfase54654'
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 400 at invalid path params', async done => {
-                const res = await request.get( `${ url }/category/sf546dfds5fg4dgd` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
-                        items: 10,
-                        page : 1
-                    } )
-                expect( res.status ).toBe( 400 )
-                expect( res.body.message ).toBe( 'Data integrity error' )
-                done()
-            } )
-            it( 'Should return http 200 at valid params', async done => {
-                const res = await request.get( `${ url }/category/${ userCategory }` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
+                        items   : 10,
+                        page    : 1,
+                        user    : userID,
+                        category: userCategory
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list by category' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 1 )
                 done()
             } )
         } )
-        describe( 'GET /api/todos/status/:status', () => {
+        describe( 'GET /api/todos [items, page, status - Pending]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
-                const res = await request.get( `${ url }/status/Pending` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
                     .query( {
-                        items: 10,
-                        page : 1
+                        items : 10,
+                        page  : 1,
+                        user  : userID,
+                        status: 'Pending'
                     } )
                 expect( res.status ).toBe( 401 )
                 expect( res.body.message ).toBe( 'Unauthorized access' )
                 done()
             } )
             it( 'Should return http 400 at invalid query params', async done => {
-                const res = await request.get( `${ url }/status/Pending` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
-                        items: null,
-                        page : 'algo ahi'
+                        items : null,
+                        page  : 'algo ahi',
+                        user  : 'jsdhksjahd',
+                        status: '54654sdsdsadassafasfasfase54654'
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 400 at invalid path params', async done => {
-                const res = await request.get( `${ url }/status/sf546dfds5fg4dgd` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
-                        items: 10,
-                        page : 1
-                    } )
-                expect( res.status ).toBe( 400 )
-                expect( res.body.message ).toBe( 'Data integrity error' )
-                done()
-            } )
-            it( 'Should return http 200 at valid params [Pending]', async done => {
-                const res = await request.get( `${ url }/status/Pending` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
+                        items : 10,
+                        page  : 1,
+                        user  : userID,
+                        status: 'Pending'
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list by status Pending' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 2 )
                 done()
             } )
-            it( 'Should return http 200 at valid params [Overdue]', async done => {
-                const res = await request.get( `${ url }/status/Overdue` )
-                    .set( 'Authorization', token )
+        } )
+        describe( 'GET /api/todos [items, page, status - Overdue]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
                     .query( {
-                        items: 10,
-                        page : 1
+                        items : 10,
+                        page  : 1,
+                        user  : userID,
+                        status: 'Overdue'
                     } )
-                expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list by status Overdue' )
-                expect( res.body.response.pagination ).toBeTruthy()
-                expect( res.body.response.data ).toBeTruthy()
-                expect( res.body.response.data ).toHaveLength( 1 )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
                 done()
             } )
-            it( 'Should return http 200 at valid params [Finished]', async done => {
-                const res = await request.get( `${ url }/status/Finished` )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
-                        items: 10,
-                        page : 1
+                        items : null,
+                        page  : 'algo ahi',
+                        user  : 'sudjshfjs',
+                        status: '54654sdsdsadassafasfasfase54654'
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items : 10,
+                        page  : 1,
+                        user  : userID,
+                        status: 'Overdue'
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list by status Finished' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 1 )
                 done()
             } )
         } )
-        describe( 'GET /api/todos/date', () => {
+        describe( 'GET /api/todos [items, page, status - Finished]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
-                const res = await request.get( `${ url }/date` )
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        items : 10,
+                        page  : 1,
+                        user  : userID,
+                        status: 'Finished'
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items : null,
+                        page  : 'algo ahi',
+                        user  : 'dkjfhkdsjfh',
+                        status: '54654sdsdsadassafasfasfase54654'
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items : 10,
+                        page  : 1,
+                        user  : userID,
+                        status: 'Finished'
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
+                expect( res.body.response.pagination ).toBeTruthy()
+                expect( res.body.response.data ).toBeTruthy()
+                expect( res.body.response.data ).toHaveLength( 1 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos [items, page, start]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', null )
                     .query( {
                         items: 10,
-                        page : 1
-                    } )
-                    .send( {
+                        page : 1,
+                        user : userID,
                         start: new Date().toISOString().substr( 0, 10 )
                     } )
                 expect( res.status ).toBe( 401 )
@@ -801,64 +1010,176 @@ describe( 'TEST TODOS', () => {
                 done()
             } )
             it( 'Should return http 400 at invalid query params', async done => {
-                const res = await request.get( `${ url }/date` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: null,
-                        page : 'algo ahi'
-                    } )
-                    .send( {
-                        start: new Date().toISOString().substr( 0, 10 )
-                    } )
-                expect( res.status ).toBe( 400 )
-                expect( res.body.message ).toBe( 'Data integrity error' )
-                done()
-            } )
-            it( 'Should return http 400 at invalid body', async done => {
-                const res = await request.get( `${ url }/date` )
-                    .set( 'Authorization', token )
-                    .query( {
-                        items: 10,
-                        page : 1
-                    } )
-                    .send( {
+                        page : 'algo ahi',
+                        user : 'kjsdhfkjdsf',
                         start: null
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 400 at invalid date range', async done => {
-                const res = await request.get( `${ url }/date` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: 10,
-                        page : 1
+                        page : 1,
+                        user : userID,
+                        start: new Date().toISOString().substr( 0, 10 )
                     } )
-                    .send( {
-                        start: new Date().toISOString().substr( 0, 10 ),
-                        end  : '1990-10-01'
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
+                expect( res.body.response.pagination ).toBeTruthy()
+                expect( res.body.response.data ).toBeTruthy()
+                expect( res.body.response.data ).toHaveLength( 4 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos [items, page, end]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        items: 10,
+                        page : 1,
+                        user : userID,
+                        end  : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items: null,
+                        page : 'algo ahi',
+                        user : 'lkdfklsdf',
+                        end  : null
                     } )
                 expect( res.status ).toBe( 400 )
                 expect( res.body.message ).toBe( 'Data integrity error' )
                 done()
             } )
-            it( 'Should return http 200 at valid body', async done => {
-                const res = await request.get( `${ url }/date` )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: 10,
-                        page : 1
+                        page : 1,
+                        user : userID,
+                        end  : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
                     } )
-                    .send( {
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
+                expect( res.body.response.pagination ).toBeTruthy()
+                expect( res.body.response.data ).toBeTruthy()
+                expect( res.body.response.data ).toHaveLength( 4 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos [items, page, start, end]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        items: 10,
+                        page : 1,
+                        user : userID,
+                        start: new Date().toISOString().substr( 0, 10 ),
+                        end  : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items: null,
+                        page : 'algo ahi',
+                        user : 'kjshdksjdhf',
+                        start: null,
+                        end  : null
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items: 10,
+                        page : 1,
+                        user : userID,
                         start: new Date().toISOString().substr( 0, 10 ),
                         end  : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list by dates' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 4 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos [items, page, user, status, category, start, end]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        items   : 10,
+                        page    : 1,
+                        user    : userID,
+                        category: userCategory,
+                        status  : 'Overdue',
+                        start   : new Date().toISOString().substr( 0, 10 ),
+                        end     : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items   : null,
+                        page    : 'algo ahi',
+                        user    : 'sdasfasf',
+                        category: 'adsasa',
+                        status  : 'algo',
+                        start   : null,
+                        end     : null
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        items   : 10,
+                        page    : 1,
+                        user    : userID,
+                        category: userCategory,
+                        status  : 'Overdue',
+                        start   : new Date().toISOString().substr( 0, 10 ),
+                        end     : `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
+                expect( res.body.response.pagination ).toBeTruthy()
+                expect( res.body.response.data ).toBeTruthy()
+                expect( res.body.response.data ).toHaveLength( 0 )
                 done()
             } )
         } )
@@ -897,14 +1218,15 @@ describe( 'TEST TODOS', () => {
                 done()
             } )
             it( 'Should return http 200 at valid params and new todo created', async done => {
-                const res = await request.get( `${ url }/user/${ userID }` )
+                const res = await request.get( `${ url }` )
                     .set( 'Authorization', token )
                     .query( {
                         items: 10,
-                        page : 1
+                        page : 1,
+                        user : userID
                     } )
                 expect( res.status ).toBe( 200 )
-                expect( res.body.message ).toBe( 'Todos list' )
+                expect( res.body.message ).toBe( 'Todos list by filters' )
                 expect( res.body.response.pagination ).toBeTruthy()
                 expect( res.body.response.data ).toBeTruthy()
                 expect( res.body.response.data ).toHaveLength( 5 )
@@ -999,7 +1321,7 @@ describe( 'TEST TODOS', () => {
                 done()
             } )
         } )
-        describe( 'DELETE /api/todos/status', () => {
+        describe( 'DELETE /api/todos', () => {
             it( 'Should return http 401 at no Authorization', async done => {
                 const res = await request.delete( `${ url }` )
                     .set( 'Authorization', null )

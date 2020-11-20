@@ -4,7 +4,8 @@ const logger = new Logger( 'Users' )
 const Todos = require( '../models/Todos' )
 const todos = new Todos()
 const todosController = {}
-todosController.getAllTodos = async ( req, res ) => {
+
+todosController.getTodos = async ( req, res ) => {
     const errors = validationResult( req )
     if ( !errors.isEmpty() ) {
         const e = errors.array().map( e => {
@@ -24,169 +25,28 @@ todosController.getAllTodos = async ( req, res ) => {
         const { page, items } = req.query
         const limit = parseInt( items )
         const skip = (parseInt( page ) - 1) * parseInt( items )
-        const { pagination, data } = await todos.getTodos( limit, skip )
-        return res.status( 200 ).send( {
-            status  : 'success',
-            message : 'Todos list',
-            response: { pagination, data }
-        } )
-    } catch ( err ) {
-        const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
-        return res.status( 400 ).send( {
-            status  : 'error',
-            message : 'Ops, something went wrong',
-            response: { message, ...req.info }
-        } )
-    }
-}
-todosController.getAllTodosByUserId = async ( req, res ) => {
-    const errors = validationResult( req )
-    if ( !errors.isEmpty() ) {
-        const e = errors.array().map( e => {
-            return {
-                message: e.msg,
-                param  : e.param
-            }
-        } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
-        return res.status( 400 ).send( {
-            status  : 'error',
-            message : 'Data integrity error',
-            response: { e, ...req.info }
-        } )
-    }
-    try {
-        const { user } = req.params
-        const { page, items } = req.query
-        const limit = parseInt( items )
-        const skip = (parseInt( page ) - 1) * parseInt( items )
-        if ( req.user.rol !== 'admin' && user !== req.user._id ) {
+        const params = {}
+        params.user = req.query && req.query.user
+        params.category = req.query && req.query.category
+        params.status = req.query && req.query.status
+        params.start = req.query && req.query.start
+        params.end = req.query && req.query.end
+        if ( req.user.rol !== 'admin' && params.user !== req.user._id ) {
             return res.status( 403 ).send( {
                 status : 'error',
                 message: 'Forbidden access'
             } )
         }
-        const { pagination, data } = await todos.getTodosByUserId( user, limit, skip )
+        if ( req.user.rol !== 'admin' && !req.query.user ) {
+            return res.status( 403 ).send( {
+                status : 'error',
+                message: 'Forbidden access'
+            } )
+        }
+        const { pagination, data } = await todos.getTodosByFilters( params, limit, skip )
         return res.status( 200 ).send( {
             status  : 'success',
-            message : 'Todos list',
-            response: { pagination, data }
-        } )
-    } catch ( err ) {
-        const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
-        return res.status( 400 ).send( {
-            status  : 'error',
-            message : 'Ops, something went wrong',
-            response: { message, ...req.info }
-        } )
-    }
-}
-todosController.getTodosByStatus = async ( req, res ) => {
-    const errors = validationResult( req )
-    if ( !errors.isEmpty() ) {
-        const e = errors.array().map( e => {
-            return {
-                message: e.msg,
-                param  : e.param
-            }
-        } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
-        return res.status( 400 ).send( {
-            status  : 'error',
-            message : 'Data integrity error',
-            response: { e, ...req.info }
-        } )
-    }
-    try {
-        const user = req.user._id
-        const { page, items } = req.query
-        const { status } = req.params
-        const limit = parseInt( items )
-        const skip = (parseInt( page ) - 1) * parseInt( items )
-        const { pagination, data } = await todos.getTodosByUserIdByStatus( user, status, limit, skip )
-        return res.status( 200 ).send( {
-            status  : 'success',
-            message : `Todos list by status ${ status }`,
-            response: { pagination, data }
-        } )
-    } catch ( err ) {
-        const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
-        return res.status( 400 ).send( {
-            status  : 'error',
-            message : 'Ops, something went wrong',
-            response: { message, ...req.info }
-        } )
-    }
-}
-todosController.getTodosByDates = async ( req, res ) => {
-    const errors = validationResult( req )
-    if ( !errors.isEmpty() ) {
-        const e = errors.array().map( e => {
-            return {
-                message: e.msg,
-                param  : e.param
-            }
-        } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
-        return res.status( 400 ).send( {
-            status  : 'error',
-            message : 'Data integrity error',
-            response: { e, ...req.info }
-        } )
-    }
-    try {
-        const user = req.user._id
-        const { page, items } = req.query
-        let { start, end } = req.body
-        const limit = parseInt( items )
-        const skip = (parseInt( page ) - 1) * parseInt( items )
-        end =
-            end || `${ new Date().getFullYear() }` + '-' + (`${ new Date().getMonth() + 1 }` < 10 ? `0${ new Date().getMonth() + 1 }` : `${ new Date().getMonth() + 1 }`) + '-' + (`${ new Date().getDate() + 1 }` < 10 ? `0${ new Date().getDate() + 1 }` : `${ new Date().getDate() + 1 }`)
-        const { pagination, data } = await todos.getTodosByUserIdByDateRange( user, start, end, limit, skip )
-        return res.status( 200 ).send( {
-            status  : 'success',
-            message : `Todos list by dates`,
-            response: { pagination, data }
-        } )
-    } catch ( err ) {
-        const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
-        return res.status( 400 ).send( {
-            status  : 'error',
-            message : 'Ops, something went wrong',
-            response: { message, ...req.info }
-        } )
-    }
-}
-todosController.getTodosByCategory = async ( req, res ) => {
-    const errors = validationResult( req )
-    if ( !errors.isEmpty() ) {
-        const e = errors.array().map( e => {
-            return {
-                message: e.msg,
-                param  : e.param
-            }
-        } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
-        return res.status( 400 ).send( {
-            status  : 'error',
-            message : 'Data integrity error',
-            response: { e, ...req.info }
-        } )
-    }
-    try {
-        const user = req.user._id
-        const { page, items } = req.query
-        const { category } = req.params
-        const limit = parseInt( items )
-        const skip = (parseInt( page ) - 1) * parseInt( items )
-        const { pagination, data } = await todos.getTodosByUserIdByCategoryId( user, category, limit, skip )
-        return res.status( 200 ).send( {
-            status  : 'success',
-            message : `Todos list by category`,
+            message : 'Todos list by filters',
             response: { pagination, data }
         } )
     } catch ( err ) {

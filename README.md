@@ -19,7 +19,7 @@ JWT
   - [x] Users
   - [x] Roles
   - [x] Categories
-  - [ ] Todos
+  - [x] Todos
 - Routes
   - [x] Users
   - [x] Roles
@@ -43,7 +43,7 @@ JWT
   - [x] Admin
   - [x] Roles
   - [x] Categories
-  - [ ] Todos
+  - [x] Todos
 
 ### Project setup
 > npm install

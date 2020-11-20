@@ -60,7 +60,7 @@ usersController.listAllUsers = async ( req, res ) => {
         const { items, page } = req.query
         const limit = parseInt( items )
         const skip = (parseInt( page ) - 1) * parseInt( items )
-        const { pagination, data } = user.getUsers( id, limit, skip )
+        const { pagination, data } = await user.getUsers( id, limit, skip )
         return res.status( 200 ).send( {
             status  : 'success',
             message : 'Users list',
@@ -94,7 +94,7 @@ usersController.findUserById = async ( req, res ) => {
     }
     try {
         const { id } = req.params
-        const response = user.getUserById( id )
+        const response = await user.getUserById( id )
         return res.status( 200 ).send( {
             status : 'success',
             message: 'User',

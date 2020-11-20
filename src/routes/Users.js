@@ -99,13 +99,13 @@ router.put( '/:id', [ authentication, admin ], [
         .trim()
         .isLength( { min: 6, max: 100 } ).withMessage( 'Must be between six and 100 characters' )
         .custom( value => !/\s/.test( value ) ).withMessage( 'No white spaces allowed' )
-        .custom( async value => { if ( !await isUniqueUserEmail( value ) ) return Promise.reject() } ).withMessage( 'Email must be unique' ),
+        .custom( async ( value, { req } ) => { if ( !await isUniqueUserEmail( value, req.params.id ) ) return Promise.reject() } ).withMessage( 'Email must be unique' ),
     body( 'rol' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
         .trim()
         .isMongoId().withMessage( 'Not a valid ID' )
 ], updateUsersById )
-router.put( '/password', [ authentication, admin ], [
+router.put( '/set/password', [ authentication, admin ], [
     body( 'id' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
         .trim()
@@ -116,7 +116,7 @@ router.put( '/password', [ authentication, admin ], [
         .trim()
         .custom( value => !/\s/.test( value ) ).withMessage( 'No white spaces allowed' )
 ], updateUsersPasswordById )
-router.put( '/rol', [ authentication, admin ], [
+router.put( '/set/rol', [ authentication, admin ], [
     body( 'id' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
         .trim()
