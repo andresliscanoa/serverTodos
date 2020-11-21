@@ -126,34 +126,6 @@ paths:
                   status: error
                   message: Ops, something went wrong | The credentials are not correct | Data integrity error
                   response:
-        401:
-          description: UNATHORIZED ACCESS
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  message:
-                    type: string
-                example:
-                  status: error
-                  message: Unathorized access
-        403:
-          description: FORBIDDEN ACCESS
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                  message:
-                    type: string
-                example:
-                  status: error
-                  message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
   /users/{id}:
