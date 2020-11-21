@@ -64,12 +64,51 @@ paths:
                     type: string
                   message:
                     type: string
-                  token:
-                    type: string
+                  response:
+                    type: object
+                    properties:
+                      user:
+                        type: object
+                        properties:
+                          name:
+                            type: object
+                            properties:
+                              first:
+                                type: string
+                              last:
+                                type: string
+                          lastname:
+                            type: object
+                            properties:
+                              first:
+                                type: string
+                              last:
+                                type: string
+                          email:
+                            type: string
+                          rol:
+                            type: object
+                            properties:
+                              _id:
+                                type: string
+                              name:
+                                type: string
+                      token:
+                        type: string
                 example:
                   status: success
                   message: User authorized
-                  token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                  response:
+                    user:
+                      name:
+                        first: name
+                      lastname:
+                        first: lastname
+                      email: email@email.com
+                      rol:
+                        _id: 5f2f7389899672386846c567
+                        name: rol
+                    token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
         400:
           description: BAD REQUEST
           content:

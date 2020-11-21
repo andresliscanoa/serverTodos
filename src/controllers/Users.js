@@ -164,6 +164,12 @@ usersController.singIn = async ( req, res ) => {
         const userFound = await Users.findOne(
             {
                 email
+            },
+            {
+                createdAt: 0,
+                updatedAt: 0,
+                __v      : 0,
+                password : 0
             }
         )
             .populate( {
@@ -174,9 +180,12 @@ usersController.singIn = async ( req, res ) => {
         if ( match ) {
             const token = await userFound.generateJwt()
             return res.header( 'Authorization', `Bearer ${ token }` ).status( 200 ).send( {
-                status : 'success',
-                message: 'User authorized',
-                token  : `Bearer ${ token }`
+                status  : 'success',
+                message : 'User authorized',
+                response: {
+                    user : userFound,
+                    token: `Bearer ${ token }`
+                }
             } )
         }
         return res.status( 400 ).send( {
