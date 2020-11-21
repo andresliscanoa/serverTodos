@@ -1,6 +1,5 @@
 const app = require( './server/index' )
 const supertest = require( 'supertest' )
-const faker = require( 'faker' )
 const request = supertest( app )
 const { setup } = require( './server/setup' )
 setup().then()
@@ -13,8 +12,8 @@ describe( 'GET /api/roles', () => {
                 email   : 'user1@todos.com',
                 password: '123456789'
             } )
-        expect( res.body.token ).toBeTruthy()
-        token = res.body.token
+        expect( res.body.response.token ).toBeTruthy()
+        token = res.body.response.token
         done()
     } )
     it( 'Should return http 401 Unauthorized access', async done => {
@@ -31,14 +30,14 @@ describe( 'GET /api/roles', () => {
         expect( res.body.message ).toBe( 'Forbidden access' )
         done()
     } )
-    it( 'Should login any user successfully', async done => {
+    it( 'Should login admin user successfully', async done => {
         const res = await request.post( '/api/users/sing/in' )
             .send( {
                 email   : 'admin@todos.com',
                 password: '123456789'
             } )
-        expect( res.body.token ).toBeTruthy()
-        token = res.body.token
+        expect( res.body.response.token ).toBeTruthy()
+        token = res.body.response.token
         done()
     } )
     it( 'Should return http 200 and a list of roles', async done => {

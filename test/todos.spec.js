@@ -16,8 +16,8 @@ describe( 'TEST TODOS', () => {
                     email   : 'admin@todos.com',
                     password: '123456789'
                 } )
-            expect( res.body.token ).toBeTruthy()
-            token = res.body.token
+            expect( res.body.response.token ).toBeTruthy()
+            token = res.body.response.token
             done()
         } )
         describe( 'GET /api/todos [items, page]', () => {
@@ -701,8 +701,8 @@ describe( 'TEST TODOS', () => {
                     email   : 'user1@todos.com',
                     password: '123456789'
                 } )
-            expect( res.body.token ).toBeTruthy()
-            token = res.body.token
+            expect( res.body.response.token ).toBeTruthy()
+            token = res.body.response.token
             done()
         } )
         describe( 'GET /api/todos [items, page]', () => {

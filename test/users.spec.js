@@ -76,8 +76,8 @@ describe( 'USERS TEST', () => {
                 } )
             expect( res.status ).toBe( 200 )
             expect( res.body.message ).toBe( 'User authorized' )
-            expect( res.body.token ).toBeTruthy()
-            token = res.body.token
+            expect( res.body.response.token ).toBeTruthy()
+            token = res.body.response.token
             done()
         } )
     } )
@@ -335,7 +335,7 @@ describe( 'USERS TEST', () => {
                 } )
             expect( res.status ).toBe( 200 )
             expect( res.body.message ).toBe( 'User authorized' )
-            expect( res.body.token ).toBeTruthy()
+            expect( res.body.response.token ).toBeTruthy()
             done()
         } )
     } )

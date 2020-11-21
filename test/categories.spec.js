@@ -14,8 +14,8 @@ describe( 'TEST CATEGORIES', () => {
                     email   : 'admin@todos.com',
                     password: '123456789'
                 } )
-            expect( res.body.token ).toBeTruthy()
-            token = res.body.token
+            expect( res.body.response.token ).toBeTruthy()
+            token = res.body.response.token
             done()
         } )
         describe( 'GET /api/categories/unique/name?value', () => {
@@ -244,8 +244,8 @@ describe( 'TEST CATEGORIES', () => {
                     email   : 'user1@todos.com',
                     password: '123456789'
                 } )
-            expect( res.body.token ).toBeTruthy()
-            token = res.body.token
+            expect( res.body.response.token ).toBeTruthy()
+            token = res.body.response.token
             done()
         } )
         describe( 'GET /api/categories/unique/name?value', () => {
