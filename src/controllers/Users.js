@@ -168,8 +168,7 @@ usersController.singIn = async ( req, res ) => {
             {
                 createdAt: 0,
                 updatedAt: 0,
-                __v      : 0,
-                password : 0
+                __v: 0
             }
         )
             .populate( {
@@ -179,11 +178,17 @@ usersController.singIn = async ( req, res ) => {
         const match = await user.comparePasswords( password, userFound.password )
         if ( match ) {
             const token = await userFound.generateJwt()
+            const user = {
+                name    : userFound.name,
+                lastname: userFound.lastname,
+                email   : userFound.email,
+                rol     : userFound.rol
+            }
             return res.header( 'Authorization', `Bearer ${ token }` ).status( 200 ).send( {
                 status  : 'success',
                 message : 'User authorized',
                 response: {
-                    user : userFound,
+                    user,
                     token: `Bearer ${ token }`
                 }
             } )
