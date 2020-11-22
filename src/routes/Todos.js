@@ -2,8 +2,8 @@ const express = require( 'express' )
 const router = express.Router()
 const authentication = require( '../middlewares/authentication' )
 const authorization = require( '../middlewares/authorization' )
-const { query, body } = require( 'express-validator' )
-const { getTodosTotalByStatus, getTodos, createTodo, updateTodoById, updateTodoStatusById, deleteTodoById } = require( '../controllers/Todos' )
+const { query, param, body } = require( 'express-validator' )
+const { getTodosTotalByStatus, getTodos, getTodoById, createTodo, updateTodoById, updateTodoStatusById, deleteTodoById } = require( '../controllers/Todos' )
 
 router.get( '/dash', [ authentication, authorization ], [
     query( 'user' )
@@ -41,6 +41,16 @@ router.get( '', [ authentication, authorization ], [
         .trim()
         .isMongoId().withMessage( 'Not a valid ID' )
 ], getTodos )
+router.get( '/one/:id', [ authentication, authorization ], [
+    param( 'id' )
+        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
+        .trim()
+        .isMongoId().withMessage( 'Not a valid ID' ),
+    query( 'user' )
+        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
+        .trim()
+        .isMongoId().withMessage( 'Not a valid ID' )
+], getTodoById )
 router.post( '', [ authentication, authorization ], [
     body( 'title' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )

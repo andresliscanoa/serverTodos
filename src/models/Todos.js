@@ -83,6 +83,11 @@ todoSchema.methods.getTodosByFilters = async ( params, limit, skip ) => {
                 __v: 0
             }
         )
+        .sort(
+            {
+                createdAt: 'desc'
+            }
+        )
         .skip( skip )
         .limit( limit )
         .populate(
@@ -100,6 +105,29 @@ todoSchema.methods.getTodosByFilters = async ( params, limit, skip ) => {
     const pagination = { total, perPage: limit, pages: Math.ceil( total / limit ) }
     return { pagination, data }
 }
+todoSchema.methods.getTodosById = async ( id, user ) =>
+    await mongoose.model( 'Todos', todoSchema, 'Todos' )
+        .findOne(
+            {
+                _id : { $eq: ObjectId( id ) },
+                user: { $eq: ObjectId( user ) }
+            },
+            {
+                updatedAt: 0, __v: 0
+            }
+        )
+        .populate(
+            {
+                path  : 'category',
+                select: '_id name'
+            }
+        )
+        .populate(
+            {
+                path  : 'user',
+                select: '_id email'
+            }
+        )
 todoSchema.methods.updateTodosByIdByUserId =
     async ( id, user, title, description, category, start, deadline, status ) =>
         await mongoose.model( 'Todos', todoSchema, 'Todos' )

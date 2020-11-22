@@ -111,6 +111,53 @@ todosController.getTodos = async ( req, res ) => {
         } )
     }
 }
+todosController.getTodoById = async ( req, res ) => {
+    const errors = validationResult( req )
+    if ( !errors.isEmpty() ) {
+        const e = errors.array().map( e => {
+            return {
+                message: e.msg,
+                param  : e.param
+            }
+        } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
+        return res.status( 400 ).send( {
+            status  : 'error',
+            message : 'Data integrity error',
+            response: { err: e, info: req.info }
+        } )
+    }
+    try {
+        const { id } = req.params
+        const { user } = req.query
+        if ( req.user.rol !== 'admin' && user !== req.user._id ) {
+            return res.status( 403 ).send( {
+                status : 'error',
+                message: 'Forbidden access'
+            } )
+        }
+        const data = await todos.getTodosById( id, user )
+        return res.status( 200 ).send( {
+            status  : 'success',
+            message : 'Todos list by filters',
+            response: data
+        } )
+    } catch ( err ) {
+        const { code, message, stack } = err
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
+        return res.status( 400 ).send( {
+            status  : 'error',
+            message : 'Ops, something went wrong',
+            response: { err: message, info: req.info }
+        } )
+    }
+}
 todosController.createTodo = async ( req, res ) => {
     const errors = validationResult( req )
     if ( !errors.isEmpty() ) {
