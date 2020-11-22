@@ -20,6 +20,74 @@ describe( 'TEST TODOS', () => {
             token = res.body.response.token
             done()
         } )
+        describe( 'GET /api/todos/dash [Admin]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }/dash` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        user: adminID
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }/dash` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        user: 'askjjk'
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }/dash` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        user: adminID
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos dashboard' )
+                expect( res.body.response ).toBeTruthy()
+                expect( res.body.response ).toHaveLength( 3 )
+                done()
+            } )
+        } )
+        describe( 'GET /api/todos/dash [User]', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }/dash` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        user: userID
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }/dash` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        user: 'askjjk'
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid query params', async done => {
+                const res = await request.get( `${ url }/dash` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        user: userID
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todos dashboard' )
+                expect( res.body.response ).toBeTruthy()
+                expect( res.body.response ).toHaveLength( 3 )
+                done()
+            } )
+        } )
         describe( 'GET /api/todos [items, page]', () => {
             it( 'Should return http 401 at no Authorization', async done => {
                 const res = await request.get( `${ url }` )

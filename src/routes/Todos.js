@@ -3,8 +3,14 @@ const router = express.Router()
 const authentication = require( '../middlewares/authentication' )
 const authorization = require( '../middlewares/authorization' )
 const { query, body } = require( 'express-validator' )
-const { getTodos, createTodo, updateTodoById, updateTodoStatusById, deleteTodoById } = require( '../controllers/Todos' )
+const { getTodosTotalByStatus, getTodos, createTodo, updateTodoById, updateTodoStatusById, deleteTodoById } = require( '../controllers/Todos' )
 
+router.get( '/dash', [ authentication, authorization ], [
+    query( 'user' )
+        .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
+        .trim()
+        .isMongoId().withMessage( 'Not a valid ID' )
+], getTodosTotalByStatus )
 router.get( '', [ authentication, authorization ], [
     query( 'items' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )

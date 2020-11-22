@@ -14,11 +14,11 @@ usersController.uniqueUsersEmails = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -31,11 +31,17 @@ usersController.uniqueUsersEmails = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -48,11 +54,11 @@ usersController.listAllUsers = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -68,11 +74,17 @@ usersController.listAllUsers = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -85,11 +97,11 @@ usersController.findUserById = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -102,11 +114,17 @@ usersController.findUserById = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -119,11 +137,11 @@ usersController.createUser = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -135,11 +153,17 @@ usersController.createUser = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -161,37 +185,31 @@ usersController.singIn = async ( req, res ) => {
     }
     try {
         const { email, password } = req.body
-        const userFound = await Users.findOne(
-            {
-                email
-            },
-            {
-                createdAt: 0,
-                updatedAt: 0,
-                __v: 0
-            }
-        )
+        const userFound = await Users.findOne( { email } )
             .populate( {
                 path  : 'rol',
                 select: 'name'
             } )
-        const match = await user.comparePasswords( password, userFound.password )
-        if ( match ) {
-            const token = await userFound.generateJwt()
-            const user = {
-                name    : userFound.name,
-                lastname: userFound.lastname,
-                email   : userFound.email,
-                rol     : userFound.rol
-            }
-            return res.header( 'Authorization', `Bearer ${ token }` ).status( 200 ).send( {
-                status  : 'success',
-                message : 'User authorized',
-                response: {
-                    user,
-                    token: `Bearer ${ token }`
+        if ( userFound !== null ) {
+            const match = await user.comparePasswords( password, userFound.password )
+            if ( match ) {
+                const token = await userFound.generateJwt()
+                const user = {
+                    _id     : userFound._id,
+                    name    : userFound.name,
+                    lastname: userFound.lastname,
+                    email   : userFound.email,
+                    rol     : userFound.rol
                 }
-            } )
+                return res.header( 'Authorization', `Bearer ${ token }` ).status( 200 ).send( {
+                    status  : 'success',
+                    message : 'User authorized',
+                    response: {
+                        user,
+                        token: `Bearer ${ token }`
+                    }
+                } )
+            }
         }
         return res.status( 400 ).send( {
             status : 'error',
@@ -216,11 +234,11 @@ usersController.updateUsersById = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -237,11 +255,17 @@ usersController.updateUsersById = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -254,11 +278,11 @@ usersController.updateUsersPasswordById = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -275,11 +299,17 @@ usersController.updateUsersPasswordById = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -292,11 +322,11 @@ usersController.updateUsersRoleById = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -312,11 +342,17 @@ usersController.updateUsersRoleById = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }

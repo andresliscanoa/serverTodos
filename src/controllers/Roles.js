@@ -14,11 +14,17 @@ rolesController.findAllRoles = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }

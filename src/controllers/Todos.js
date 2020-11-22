@@ -5,6 +5,52 @@ const Todos = require( '../models/Todos' )
 const todos = new Todos()
 const todosController = {}
 
+todosController.getTodosTotalByStatus = async ( req, res ) => {
+    const errors = validationResult( req )
+    if ( !errors.isEmpty() ) {
+        const e = errors.array().map( e => {
+            return {
+                message: e.msg,
+                param  : e.param
+            }
+        } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
+        return res.status( 400 ).send( {
+            status  : 'error',
+            message : 'Data integrity error',
+            response: { err: e, info: req.info }
+        } )
+    }
+    try {
+        const { user } = req.query
+        if ( req.user.rol !== 'admin' && user !== req.user._id ) {
+            return res.status( 403 ).send( {
+                status : 'error',
+                message: 'Forbidden access'
+            } )
+        }
+        const data = await todos.getTodosGroupByStatus( user )
+        return res.status( 200 ).send( {
+            status  : 'success',
+            message : 'Todos dashboard',
+            response: data
+        } )
+    } catch ( err ) {
+        const { code, message, stack } = err
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
+        return res.status( 400 ).send( {
+            status  : 'error',
+            message : 'Ops, something went wrong',
+            response: { err: message, info: req.info }
+        } )
+    }
+}
 todosController.getTodos = async ( req, res ) => {
     const errors = validationResult( req )
     if ( !errors.isEmpty() ) {
@@ -14,11 +60,11 @@ todosController.getTodos = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -51,11 +97,17 @@ todosController.getTodos = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -68,11 +120,11 @@ todosController.createTodo = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -89,11 +141,17 @@ todosController.createTodo = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -106,11 +164,11 @@ todosController.updateTodoById = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -127,11 +185,17 @@ todosController.updateTodoById = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -144,11 +208,11 @@ todosController.updateTodoStatusById = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -165,11 +229,17 @@ todosController.updateTodoStatusById = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -182,11 +252,11 @@ todosController.deleteTodoById = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -203,11 +273,17 @@ todosController.deleteTodoById = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }

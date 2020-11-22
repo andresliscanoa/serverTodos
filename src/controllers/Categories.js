@@ -14,11 +14,11 @@ categoriesController.uniqueCategoriesName = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -32,11 +32,17 @@ categoriesController.uniqueCategoriesName = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -49,11 +55,11 @@ categoriesController.getCategoriesByIdUser = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -69,11 +75,17 @@ categoriesController.getCategoriesByIdUser = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -86,11 +98,11 @@ categoriesController.getCategoriesByNameByIdUser = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -106,11 +118,17 @@ categoriesController.getCategoriesByNameByIdUser = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -123,11 +141,11 @@ categoriesController.createCategory = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -140,11 +158,17 @@ categoriesController.createCategory = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -157,11 +181,11 @@ categoriesController.updateCategoriesByIdByUser = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -178,11 +202,17 @@ categoriesController.updateCategoriesByIdByUser = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }
@@ -195,11 +225,11 @@ categoriesController.updateCategoriesStatusByIdByUser = async ( req, res ) => {
                 param  : e.param
             }
         } )
-        await logger.warn( 'Data integrity error', { ...e, ...req.info, user: req.user.email } )
+        await logger.warn( 'Data integrity error', { err: e, info: req.info, user: req.user.email } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Data integrity error',
-            response: { e, ...req.info }
+            response: { err: e, info: req.info }
         } )
     }
     try {
@@ -216,11 +246,17 @@ categoriesController.updateCategoriesStatusByIdByUser = async ( req, res ) => {
         } )
     } catch ( err ) {
         const { code, message, stack } = err
-        await logger.error( 'Ops, something went wrong', { code, message, stack, ...req.info, user: req.user.email } )
+        await logger.error( 'Ops, something went wrong', {
+            code,
+            message,
+            stack,
+            info: req.info,
+            user: req.user.email
+        } )
         return res.status( 400 ).send( {
             status  : 'error',
             message : 'Ops, something went wrong',
-            response: { message, ...req.info }
+            response: { err: message, info: req.info }
         } )
     }
 }

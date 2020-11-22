@@ -47,6 +47,15 @@ const todoSchema = new mongoose.Schema( {
     }
 }, { timestamps: true } )
 
+todoSchema.methods.getTodosGroupByStatus = async user =>
+    await mongoose.model( 'Todos', todoSchema, 'Todos' )
+        .aggregate(
+            [
+                { $match: { user: { $eq: ObjectId( user ) } } },
+                { $group: { _id: '$status', count: { $sum: 1 } } }
+            ]
+        )
+
 todoSchema.methods.getTodosByFilters = async ( params, limit, skip ) => {
     let filter = {}
     if ( params.user ) filter.user = ObjectId( params.user )
