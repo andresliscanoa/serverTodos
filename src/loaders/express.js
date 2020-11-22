@@ -41,7 +41,7 @@ app.use( function ( req, res, next ) {
 app.set( 'trust proxy', 1 )
 const apiLimiter = rateLimit( {
     windowMs: 60 * 1000, //Abrimos una ventana de un minuto
-    max     : 25, // Limitamos a 50 peticiones a las API
+    max     : process.env.LIMIT, // Limitamos a 50 peticiones a las API
     message : 'Demasiadas peticiones desde esta misma IP',
     handler : function ( req, res ) {
         const fs = require( 'fs' )
