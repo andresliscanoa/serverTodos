@@ -139,7 +139,7 @@ todosController.getTodoById = async ( req, res ) => {
         const data = await todos.getTodosById( id, user )
         return res.status( 200 ).send( {
             status  : 'success',
-            message : 'Todos list by filters',
+            message : 'Todo by Id',
             response: data
         } )
     } catch ( err ) {

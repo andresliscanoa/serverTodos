@@ -642,6 +642,49 @@ describe( 'TEST TODOS', () => {
                 done()
             } )
         } )
+        describe( 'GET /api/todos/one/:id', () => {
+            it( 'Should return http 401 at no Authorization', async done => {
+                const res = await request.get( `${ url }/one/${ id }` )
+                    .set( 'Authorization', null )
+                    .query( {
+                        user: adminID
+                    } )
+                expect( res.status ).toBe( 401 )
+                expect( res.body.message ).toBe( 'Unauthorized access' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid path params', async done => {
+                const res = await request.get( `${ url }/one/12345` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        user: adminID
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 400 at invalid query params', async done => {
+                const res = await request.get( `${ url }/one/${ id }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        user: faker.random.uuid()
+                    } )
+                expect( res.status ).toBe( 400 )
+                expect( res.body.message ).toBe( 'Data integrity error' )
+                done()
+            } )
+            it( 'Should return http 200 at valid params', async done => {
+                const res = await request.get( `${ url }/one/${ id }` )
+                    .set( 'Authorization', token )
+                    .query( {
+                        user: adminID
+                    } )
+                expect( res.status ).toBe( 200 )
+                expect( res.body.message ).toBe( 'Todo by Id' )
+                expect( res.body.response._id ).toBeTruthy()
+                done()
+            } )
+        } )
         describe( 'PUT /api/todos', () => {
             it( 'Should return http 401 at no Authorization', async done => {
                 const res = await request.put( `${ url }` )

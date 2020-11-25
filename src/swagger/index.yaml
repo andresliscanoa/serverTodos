@@ -1638,6 +1638,129 @@ paths:
                   message: Forbidden access
         500:
           description: INTERNAL SERVER ERROR
+  /todos/one/{id}:
+    get:
+      security:
+        - apiKey: [ ]
+      tags:
+        - Todos
+      summary: Find a ToDo by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ToDo ID
+        - in: query
+          name: user
+          required: true
+          schema:
+            type: string
+          dsescription: ToDo owner (ID)
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      category:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                          name:
+                            type: string
+                      start:
+                        type: string
+                      deadline:
+                        type: string
+                      status:
+                        type: string
+                      user:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                          email:
+                            type: string
+                example:
+                  status: success
+                  message: Todo by Id
+                  response:
+                    title: titleOne
+                    description: descriptionOne [Optional]
+                    category:
+                      _id: 5f2f7389899672386846c566
+                      name: categoryOne
+                    start: 2020-10-10T14:02:03Z [Optional]
+                    deadline: 2020-10-10T14:02:03Z [Optional]
+                    status: Pending
+                    user:
+                      _id: 5f2f7389899672386846c568
+                      email: email@email.com
+        400:
+          description: BAD REQUEST
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  response:
+                    type: object
+                example:
+                  status: error
+                  message: Ops, something went wrong | The credentials are not correct | Data integrity error
+                  response:
+        401:
+          description: UNATHORIZED ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Unathorized access
+        403:
+          description: FORBIDDEN ACCESS
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+                example:
+                  status: error
+                  message: Forbidden access
+        500:
+          description: INTERNAL SERVER ERROR
   /todos:
     get:
       security:
