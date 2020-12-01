@@ -791,7 +791,7 @@ paths:
                   type: string
               example:
                 id: 5f2f7389899672386846c555
-                password: 5f2f7389899672386846c556
+                rol: 5f2f7389899672386846c556
       produces:
         - application/json
       responses:
