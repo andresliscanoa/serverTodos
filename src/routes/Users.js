@@ -85,14 +85,14 @@ router.put( '/:id', [ authentication, admin ], [
         .isLength( { min: 1, max: 255 } ).withMessage( 'Maximum 255 characters' ),
     body( 'name.last' ).optional()
         .trim()
-        .isLength( { min: 1, max: 255 } ).withMessage( 'Maximum 255 characters' ),
+        .isLength( { max: 255 } ).withMessage( 'Maximum 255 characters' ),
     body( 'lastname.first' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
         .trim()
         .isLength( { min: 1, max: 255 } ).withMessage( 'Maximum 255 characters' ),
     body( 'lastname.last' ).optional()
         .trim()
-        .isLength( { min: 1, max: 255 } ).withMessage( 'Maximum 255 characters' ),
+        .isLength( { max: 255 } ).withMessage( 'Maximum 255 characters' ),
     body( 'email' )
         .isEmail().withMessage( 'Is not a valid email format' )
         .exists( { checkNull: true, checkFalsy: true } ).withMessage( 'Mandatory field' )
