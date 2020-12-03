@@ -140,8 +140,21 @@ todoSchema.methods.updateTodosByIdByUserId =
                     title, description, category, start, deadline, status
                 }
             )
-todoSchema.methods.updateTodosStatusByIdByUserId = async ( id, user, status ) =>
-    await mongoose.model( 'Todos', todoSchema, 'Todos' )
+todoSchema.methods.updateTodosStatusByIdByUserId = async ( id, user, status ) => {
+    if ( status === 'Finished' ) {
+        return mongoose.model( 'Todos', todoSchema, 'Todos' )
+            .updateOne(
+                {
+                    _id : ObjectId( id ),
+                    user: ObjectId( user )
+                },
+                {
+                    status,
+                    deadline: new Date().toISOString()
+                }
+            )
+    }
+    return mongoose.model( 'Todos', todoSchema, 'Todos' )
         .updateOne(
             {
                 _id : ObjectId( id ),
@@ -151,6 +164,7 @@ todoSchema.methods.updateTodosStatusByIdByUserId = async ( id, user, status ) =>
                 status
             }
         )
+}
 todoSchema.methods.deleteTodosByIdByUserId = async ( id, user ) =>
     await mongoose.model( 'Todos', todoSchema, 'Todos' )
         .deleteOne(
